@@ -178,7 +178,7 @@ Run `npm run deploy`.
 
 Logs will have a richly structured format and metrics for cached and uncached reads will be output to CloudWatch Logs (using Embedded Metrics Format, under the covers). See the below image for a basic example of how you can see the number of uncached vs cached reads in CloudWatch.
 
-![Example of metrics in CloudWatch](readme/metrics.png)
+![Example of metrics in CloudWatch](./readme/metrics.png)
 
 ## Creating the GitHub webhook
 
