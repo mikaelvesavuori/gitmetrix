@@ -33,8 +33,8 @@ package:
 
 custom:
   config:
-    authToken: 5c0866db-8c08-4a4c-b951-6a0ae5ace303 # TODO: set as empty and link to https://www.uuidgenerator.net
-    accountNumber: '876265053232' # TODO: Set to 123412341234
+    authToken: 'something' # Your choice, see for example https://www.uuidgenerator.net for getting a UUID v4
+    accountNumber: '123412341234'
     tableName: gitmetrix
   aws:
     databaseArn: 'arn:aws:dynamodb:${self:provider.region}:${self:custom.config.accountNumber}:table/${self:custom.config.tableName}'
