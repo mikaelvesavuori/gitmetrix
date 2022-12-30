@@ -76,7 +76,7 @@ With `gitmetrix` you get the possibility to extract a set of core Git metrics ("
 }
 ```
 
-Or in plain English, for each day:
+Or in plain English, for each day (or over a given period), you can now answer questions like:
 
 - How many times is code pushed?
 - How many pull requests are opened?
