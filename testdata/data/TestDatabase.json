@@ -1,0 +1,93 @@
+[
+  {
+    "20220808": {
+      "repoName": "something",
+      "additions": 5,
+      "approved": 52,
+      "changedFiles": 2,
+      "changesRequested": 4,
+      "closed": 5,
+      "comments": 2,
+      "deletions": 6,
+      "merged": 8,
+      "opened": 5,
+      "pickupTime": "00:02:52:21",
+      "pushed": 3,
+      "reviewTime": "00:03:42:52"
+    }
+  },
+  {
+    "20220915": {
+      "repoName": "something-else",
+      "additions": 2,
+      "approved": 4,
+      "changedFiles": 6,
+      "changesRequested": 3,
+      "closed": 8,
+      "comments": 0,
+      "deletions": 4,
+      "merged": 3,
+      "opened": 2,
+      "pickupTime": "00:04:42:27",
+      "pushed": 1,
+      "reviewTime": "03:20:45:17"
+    }
+  },
+  {
+    "20221010": {
+      "repoName": "something",
+      "additions": 82,
+      "approved": 7,
+      "changedFiles": 23,
+      "changesRequested": 2,
+      "closed": 3,
+      "comments": 5,
+      "deletions": 2,
+      "merged": 1,
+      "opened": 2,
+      "pickupTime": "00:00:00:00",
+      "pushed": 2,
+      "reviewTime": "00:01:21:46"
+    }
+  },
+  {
+    "20221014": {
+      "repoName": "something",
+      "additions": ""
+    }
+  },
+  {
+    "20221030": {
+      "repoName": "something",
+      "additions": 412,
+      "approved": 12,
+      "changedFiles": 3,
+      "changesRequested": 2,
+      "closed": 1,
+      "comments": 3,
+      "deletions": 5,
+      "merged": 0,
+      "opened": 4,
+      "pickupTime": "00:00:00:00",
+      "pushed": 6,
+      "reviewTime": "00:00:11:30"
+    }
+  },
+  {
+    "20221218": {
+      "repoName": "something",
+      "additions": 51,
+      "approved": 2,
+      "changedFiles": 22,
+      "changesRequested": 4,
+      "closed": 6,
+      "comments": 8,
+      "deletions": 8,
+      "merged": 4,
+      "opened": 3,
+      "pickupTime": "02:01:03:10",
+      "pushed": 1,
+      "reviewTime": "00:02:42:03"
+    }
+  }
+]

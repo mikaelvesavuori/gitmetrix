@@ -1,0 +1,36 @@
+[
+  {
+    "20221030": {
+      "additions": 412,
+      "approved": 12,
+      "changedFiles": 3,
+      "changesRequested": 2,
+      "closed": 1,
+      "comments": 3,
+      "deletions": 5,
+      "merged": 0,
+      "opened": 4,
+      "pickupTime": "00:00:00:00",
+      "pushed": 6,
+      "repoName": "something",
+      "reviewTime": "00:00:11:30"
+    }
+  },
+  {
+    "20221218": {
+      "additions": 51,
+      "approved": 2,
+      "changedFiles": 22,
+      "changesRequested": 4,
+      "closed": 6,
+      "comments": 8,
+      "deletions": 8,
+      "merged": 4,
+      "opened": 3,
+      "pickupTime": "02:01:03:10",
+      "pushed": 1,
+      "repoName": "something",
+      "reviewTime": "00:02:42:03"
+    }
+  }
+]

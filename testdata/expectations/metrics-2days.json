@@ -1,0 +1,79 @@
+{
+  "average": {
+    "additions": 165,
+    "approved": 6,
+    "changedFiles": 9,
+    "changesRequested": 1,
+    "closed": 1,
+    "comments": 3,
+    "deletions": 2,
+    "merged": 0,
+    "opened": 2,
+    "pickupTime": "00:00:00:00",
+    "pushed": 3,
+    "reviewTime": "00:00:31:05"
+  },
+  "daily": {
+    "20221010": {
+      "additions": 82,
+      "approved": 7,
+      "changedFiles": 23,
+      "changesRequested": 2,
+      "closed": 3,
+      "comments": 5,
+      "deletions": 2,
+      "merged": 1,
+      "opened": 2,
+      "pickupTime": "00:00:00:00",
+      "pushed": 2,
+      "reviewTime": "00:01:21:46"
+    },
+    "20221014": {
+      "additions": 0,
+      "approved": 0,
+      "changedFiles": 0,
+      "changesRequested": 0,
+      "closed": 0,
+      "comments": 0,
+      "deletions": 0,
+      "merged": 0,
+      "opened": 0,
+      "pickupTime": "00:00:00:00",
+      "pushed": 0,
+      "reviewTime": "00:00:00:00"
+    },
+    "20221030": {
+      "additions": 412,
+      "approved": 12,
+      "changedFiles": 3,
+      "changesRequested": 2,
+      "closed": 1,
+      "comments": 3,
+      "deletions": 5,
+      "merged": 0,
+      "opened": 4,
+      "pickupTime": "00:00:00:00",
+      "pushed": 6,
+      "reviewTime": "00:00:11:30"
+    }
+  },
+  "period": {
+    "from": "20221010",
+    "to": "20221030"
+  },
+  "product": "something",
+  "total": {
+    "additions": 494,
+    "approved": 19,
+    "changedFiles": 26,
+    "changesRequested": 4,
+    "closed": 4,
+    "comments": 8,
+    "deletions": 7,
+    "merged": 1,
+    "opened": 6,
+    "pickupTime": "00:00:00:00",
+    "pushed": 8,
+    "reviewTime": "00:01:33:16"
+  }
+}

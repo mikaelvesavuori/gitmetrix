@@ -1,0 +1,12 @@
+.env
+.dccache
+
+node_modules/
+coverage/
+jest-coverage/
+.webpack/
+lib/
+.serverless/
+docs/
+diagrams/*.bkp
+diagrams/*.bak

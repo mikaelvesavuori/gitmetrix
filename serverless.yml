@@ -1,0 +1,150 @@
+service: gitmetrix
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'eu-north-1'}
+  memorySize: ${opt:memory, 1024}
+  timeout: 10
+  logRetentionInDays: 7
+  versionFunctions: false
+  deploymentBucket:
+    blockPublicAccess: true
+    maxPreviousDeploymentArtifacts: 5
+    serverSideEncryption: AES256
+  stackTags:
+    Usage: ${self:service}
+  tags:
+    Usage: ${self:service}
+  apiGateway:
+    minimumCompressionSize: 1024
+
+plugins:
+  - serverless-webpack
+  - serverless-offline
+  - serverless-iam-roles-per-function
+
+package:
+  individually: true
+  patterns:
+    - node_modules/aws-sdk/**
+    - node_modules/aws-lambda/**
+
+custom:
+  config:
+    authToken: 5c0866db-8c08-4a4c-b951-6a0ae5ace303 # TODO: set as empty and link to https://www.uuidgenerator.net
+    accountNumber: '876265053232' # TODO: Set to 123412341234
+    tableName: gitmetrix
+  aws:
+    databaseArn: 'arn:aws:dynamodb:${self:provider.region}:${self:custom.config.accountNumber}:table/${self:custom.config.tableName}'
+    apiGatewayCachingTtl:
+      prod: 30
+      dev: 0
+      test: 0
+    apiGatewayCachingTtlValue: ${self:custom.aws.apiGatewayCachingTtl.${self:provider.stage}, self:custom.aws.apiGatewayCachingTtl.test} # See: https://forum.serverless.com/t/api-gateway-custom-authorizer-caching-problems/4695
+  webpack:
+    webpackConfig: 'webpack.config.js'
+    includeModules: true
+    packager: 'npm'
+    excludeFiles: ./**/*.test.ts
+
+functions:
+  Authorizer:
+    handler: src/infrastructure/authorizers/Authorizer.handler
+    description: ${self:service} authorizer
+    environment:
+      AUTH_TOKEN: ${self:custom.config.authToken}
+  GetMetrics:
+    handler: src/infrastructure/adapters/web/GetMetrics.handler
+    description: Get metrics from Gitmetrix
+    events:
+      - http:
+          method: GET
+          path: /GetMetrics
+    iamRoleStatements:
+      - Effect: 'Allow'
+        Action:
+          - dynamodb:PutItem
+          - dynamodb:Query
+        Resource: ${self:custom.aws.databaseArn}
+    environment:
+      REGION: ${self:provider.region}
+      TABLE_NAME: ${self:custom.config.tableName}
+  AddMetrics:
+    handler: src/infrastructure/adapters/web/AddMetrics.handler
+    description: Add a metric into Gitmetrix
+    events:
+      - http:
+          method: POST
+          path: /AddMetrics
+          authorizer:
+            name: Authorizer
+            resultTtlInSeconds: ${self:custom.aws.apiGatewayCachingTtlValue}
+            identitySource: method.request.querystring.authorization, method.request.header.X-GitHub-Event
+            type: request
+    iamRoleStatements:
+      - Effect: 'Allow'
+        Action:
+          - dynamodb:PutItem
+          - dynamodb:UpdateItem
+        Resource: ${self:custom.aws.databaseArn}
+    environment:
+      REGION: ${self:provider.region}
+      TABLE_NAME: ${self:custom.config.tableName}
+
+resources:
+  Resources:
+    # DynamoDB
+    GitmetrixTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.config.tableName}
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+          - AttributeName: sk
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+          - AttributeName: sk
+            KeyType: RANGE
+        TimeToLiveSpecification:
+          AttributeName: expiresAt
+          Enabled: true
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
+        BillingMode: PAY_PER_REQUEST
+        PointInTimeRecoverySpecification:
+          PointInTimeRecoveryEnabled: true
+    # API Gateway
+    GatewayResponseDefault4XX:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
+    AuthFailureExpiredGatewayResponse:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: EXPIRED_TOKEN
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
+        StatusCode: '401'
+    AuthFailureUnauthorizedGatewayResponse:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: UNAUTHORIZED
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
+        StatusCode: '401'

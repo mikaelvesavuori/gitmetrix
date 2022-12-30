@@ -1,0 +1,48 @@
+import { MikroLog } from 'mikrolog';
+import { MikroMetric } from 'mikrometric';
+
+import { EventInput } from '../../../interfaces/Aws';
+import { MetricInputDto } from '../../../interfaces/MetricInput';
+
+import { addMetricUsecase } from '../../../usecases/addMetric';
+
+import { end } from '../../frameworks/end';
+
+import { metadataConfig } from '../../../config/metadata';
+
+/**
+ * @description This handles the intake of any new metrics.
+ *
+ * At this point, the intake will not previously have been able
+ * to ascertain the exact type of event, so we need to take care
+ * of that at this stage.
+ */
+export async function handler(event: EventInput, context: Record<string, any>) {
+  const logger = MikroLog.start({ metadataConfig, event, context });
+  MikroMetric.start({
+    namespace: 'gitmetrix',
+    serviceName: 'gitmetrix',
+    event,
+    context
+  });
+
+  try {
+    const body: Record<string, any> =
+      event.body && typeof event.body === 'string' ? JSON.parse(event.body) : event.body;
+    const headers: Record<string, any> = event.headers;
+
+    const inputDto: MetricInputDto = {
+      headers,
+      body
+    };
+
+    await addMetricUsecase(inputDto);
+
+    return end(204);
+  } catch (error: any) {
+    const statusCode: number = error?.['cause']?.['statusCode'] || 400;
+    const message: string = error.message;
+    logger.error(message);
+    return end(statusCode, message);
+  }
+}

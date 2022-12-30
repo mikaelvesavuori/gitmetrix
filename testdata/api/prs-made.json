@@ -1,0 +1,143 @@
+{
+  "data": {
+    "search": {
+      "nodes": [
+        {
+          "state": "CLOSED",
+          "resourcePath": "/mikaelvesavuori/figmagic/pull/177",
+          "comments": {
+            "nodes": [
+              {
+                "author": {
+                  "login": "mikaelvesavuori"
+                }
+              },
+              {
+                "author": {
+                  "login": "sonarcloud"
+                }
+              },
+              {
+                "author": {
+                  "login": "opauloh"
+                }
+              },
+              {
+                "author": {
+                  "login": "opauloh"
+                }
+              },
+              {
+                "author": {
+                  "login": "opauloh"
+                }
+              },
+              {
+                "author": {
+                  "login": "mikaelvesavuori"
+                }
+              },
+              {
+                "author": {
+                  "login": "opauloh"
+                }
+              }
+            ]
+          },
+          "reviews": {
+            "nodes": []
+          }
+        },
+        {
+          "state": "MERGED",
+          "resourcePath": "/mikaelvesavuori/figmagic/pull/175",
+          "comments": {
+            "nodes": [
+              {
+                "author": {
+                  "login": "cloudflare-pages"
+                }
+              },
+              {
+                "author": {
+                  "login": "mikaelvesavuori"
+                }
+              },
+              {
+                "author": {
+                  "login": "sonarcloud"
+                }
+              }
+            ]
+          },
+          "reviews": {
+            "nodes": []
+          }
+        },
+        {
+          "state": "MERGED",
+          "resourcePath": "/mikaelvesavuori/figmagic/pull/174",
+          "comments": {
+            "nodes": [
+              {
+                "author": {
+                  "login": "sonarcloud"
+                }
+              },
+              {
+                "author": {
+                  "login": "mikaelvesavuori"
+                }
+              },
+              {
+                "author": {
+                  "login": "mikaelvesavuori"
+                }
+              },
+              {
+                "author": {
+                  "login": "opauloh"
+                }
+              }
+            ]
+          },
+          "reviews": {
+            "nodes": [
+              {
+                "author": {
+                  "login": "mikaelvesavuori"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "state": "MERGED",
+          "resourcePath": "/mikaelvesavuori/figmagic/pull/173",
+          "comments": {
+            "nodes": [
+              {
+                "author": {
+                  "login": "sonarcloud"
+                }
+              },
+              {
+                "author": {
+                  "login": "mikaelvesavuori"
+                }
+              },
+              {
+                "author": {
+                  "login": "mikaelvesavuori"
+                }
+              }
+            ]
+          },
+          "reviews": {
+            "nodes": []
+          }
+        }
+      ]
+    }
+  }
+}
