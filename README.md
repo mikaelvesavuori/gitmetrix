@@ -221,7 +221,7 @@ _Consider making a pull request, starting an Issue, or otherwise informing of yo
 Get metrics for a specific interval:
 
 ```bash
-GET {BASE_URL}/GetMetrics?repo=SOMEORG/SOMEREPO&from=20221020&to=20221027
+GET {BASE_URL}/GetMetrics?repo=SOMEORG/SOMEREPO&from=20221228&to=20221229
 ```
 
 | Parameter | Required | Format     | Example                     |  Description                                                     |
@@ -238,7 +238,7 @@ GET {BASE_URL}/GetMetrics?repo=SOMEORG/SOMEREPO&from=20221020&to=20221027
   "product": "SOMEORG/SOMEREPO",
   "period": {
     "from": "20221228",
-    "to": ""
+    "to": "20221229"
   },
   // Retrieved metrics
   "total": {
