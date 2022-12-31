@@ -224,11 +224,11 @@ Get metrics for a specific interval:
 GET {BASE_URL}/GetMetrics?repo=SOMEORG/SOMEREPO&from=20221228&to=20221229
 ```
 
-| Parameter | Required | Format     | Example                     |  Description                                                     |
-| --------- | -------- | ---------- | --------------------------- | ---------------------------------------------------------------- |
-| `repo`    | Yes      | `ORG/REPO` | `mikaelvesavuori/gitmetrix` | Name of repository to get metrics for                            |
-| `from`    | Yes      | `YYYYMMDD` | `20221020`                  | Set a specific period to start from                              |
-| `to`      | No       | `YYYYMMDD` | `20221020`                  | Set a specific period to end with (defaults to yesterday's date) |
+| Parameter | Required | Format     | Example                     |  Description                                                   |
+| --------- | -------- | ---------- | --------------------------- | -------------------------------------------------------------- |
+| `repo`    | Yes      | `ORG/REPO` | `mikaelvesavuori/gitmetrix` | Name of repository to get metrics for                          |
+| `from`    | Yes      | `YYYYMMDD` | `20221020`                  | Set a specific date to start from                              |
+| `to`      | No       | `YYYYMMDD` | `20221020`                  | Set a specific date to end with (defaults to yesterday's date) |
 
 ### Example response
 
