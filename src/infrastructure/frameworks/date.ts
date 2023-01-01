@@ -1,6 +1,6 @@
 import { zuluToUnix } from './time';
 
-import { InvalidDateOrderError } from '../../application/errors';
+import { InvalidDateOrderError, InvalidDateUnitError } from '../../application/errors';
 
 /**
  * @description Returns the first date in the current month in `YYYY-MM-DD` format.
@@ -37,8 +37,8 @@ export function getLastDateInCurrentMonth(): string {
  */
 export function getCurrentDate(noDashes = false): string {
   const date = new Date();
-  const day = makeTwoDigitDay(date);
-  const month = date.getMonth() + 1;
+  const day = makeTwoDigitDate(date, 'day');
+  const month = makeTwoDigitDate(date.getMonth() + 1, 'day');
   const year = date.getFullYear();
 
   const dateString = `${year}-${month}-${day}`;
@@ -48,11 +48,16 @@ export function getCurrentDate(noDashes = false): string {
 }
 
 /**
- * @description Add leading zero if day is under 10.
+ * @description Add leading zero if date (day, month) is under 10.
  */
-export function makeTwoDigitDay(date: Date): string {
-  const day = date.getDate().toString();
-  return day.length === 1 ? `0${day}` : day;
+export function makeTwoDigitDate(date: Date | number, unit: 'day' | 'month'): string {
+  const value = (() => {
+    if (unit === 'day') return typeof date === 'number' ? `${date}` : `${date.getDate()}`;
+    if (unit === 'month') return typeof date === 'number' ? `${date}` : `${date.getMonth()}`;
+    throw new InvalidDateUnitError();
+  })();
+
+  return value.length === 1 ? `0${value}` : value;
 }
 
 /**

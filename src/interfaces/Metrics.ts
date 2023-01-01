@@ -14,7 +14,7 @@ export type MakeMetricsInput = {
  * @description The result of a metric.
  */
 export type MetricsResult = {
-  product: string;
+  repo: string;
   period: TimePeriod;
   total: MetricSet;
   daily: DailyMetricSet;

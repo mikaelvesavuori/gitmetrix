@@ -30,7 +30,7 @@ class Metrics {
     const daily = this.createDailyMetrics(items);
 
     return {
-      product: repoName,
+      repo: repoName,
       period: {
         from: fromDate,
         to: toDate

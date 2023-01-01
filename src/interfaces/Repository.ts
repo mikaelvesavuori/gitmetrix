@@ -10,11 +10,11 @@ export interface Repository {
   /**
    * @description Get metrics for a given repository and a period of time.
    *
-   * @param {RepoName} product Name of the repository
+   * @param {RepoName} repo Name of the repository
    * @param {string} fromDate Date in the form `YYYYMMDD` or `20201030`
    * @param {string} [toDate] Date in the form `YYYYMMDD` or `20201030`
    */
-  getMetrics(repoName: RepoName, fromDate: string, toDate?: string): Promise<CleanedItem[]>;
+  getMetrics(repo: RepoName, fromDate: string, toDate?: string): Promise<CleanedItem[]>;
 
   addApproval(input: MetricInput): Promise<void>;
   addChangesRequested(input: MetricInput): Promise<void>;

@@ -61,7 +61,7 @@
     "from": "20221010",
     "to": "20221030"
   },
-  "product": "something",
+  "repo": "something",
   "total": {
     "additions": 494,
     "approved": 19,

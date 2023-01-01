@@ -10,7 +10,7 @@ With `gitmetrix` you get the possibility to extract a set of core Git metrics ("
 
 ```json
 {
-  "product": "ORG/REPO",
+  "repo": "ORG/REPO",
   "period": {
     "from": "20221228",
     "to": ""
@@ -235,7 +235,7 @@ GET {BASE_URL}/GetMetrics?repo=SOMEORG/SOMEREPO&from=20221228&to=20221229
 ```json
 {
   // Dynamically set by the response
-  "product": "SOMEORG/SOMEREPO",
+  "repo": "SOMEORG/SOMEREPO",
   "period": {
     "from": "20221228",
     "to": "20221229"

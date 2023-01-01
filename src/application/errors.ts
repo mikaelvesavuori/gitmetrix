@@ -183,3 +183,18 @@ export class NoMatchingParserError extends Error {
     };
   }
 }
+
+/**
+ * @description Used when an incompatible date unit is encountered.
+ */
+export class InvalidDateUnitError extends Error {
+  constructor() {
+    super();
+    this.name = 'InvalidDateUnitError';
+    const message = `Incorrect date unit, must be 'day' or 'month'!`;
+    this.message = message;
+    this.cause = {
+      statusCode: 400
+    };
+  }
+}
