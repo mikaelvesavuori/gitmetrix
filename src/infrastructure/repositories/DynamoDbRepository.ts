@@ -42,6 +42,7 @@ export class DynamoDbRepository implements Repository {
     const REGION = process.env.REGION;
     const TABLE_NAME = process.env.TABLE_NAME;
     if (!REGION || !TABLE_NAME) throw new MissingEnvironmentVariablesDynamoError();
+
     this.tableName = TABLE_NAME;
     this.region = REGION;
     this.dynamoDb = new DynamoDBClient({ region: this.region });
@@ -71,7 +72,7 @@ export class DynamoDbRepository implements Repository {
 
     // Check cache
     const cachedData = await this.getCachedData(key, range);
-    if (cachedData) {
+    if (cachedData.length > 0) {
       addCustomMetric('cached');
       return getCleanedItems(cachedData);
     }
@@ -342,7 +343,7 @@ export class DynamoDbRepository implements Repository {
   /**
    * @description Get cached data.
    */
-  private async getCachedData(key: string, range: string): Promise<DynamoItem[] | undefined> {
+  private async getCachedData(key: string, range: string): Promise<DynamoItem[]> {
     const params = {
       TableName: this.tableName,
       KeyConditionExpression: 'pk = :pk AND sk = :sk',
@@ -365,7 +366,7 @@ export class DynamoDbRepository implements Repository {
     if (cachedData?.Items && cachedData.Items.length > 0)
       return JSON.parse(cachedData.Items[0].data['S']);
 
-    return;
+    return [];
   }
 }
 

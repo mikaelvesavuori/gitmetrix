@@ -4,7 +4,7 @@ import { InvalidDateOrderError, InvalidDateUnitError } from '../../application/e
 
 /**
  * @description Returns the first date in the current month in `YYYY-MM-DD` format.
- * @example `2022-11-20`
+ * @example `2022-12-01`
  */
 export function getFirstDateInCurrentMonth(): string {
   const date = new Date();
@@ -16,7 +16,7 @@ export function getFirstDateInCurrentMonth(): string {
 
 /**
  * @description Return the last date in the current month in `YYYY-MM-DD` format.
- * @example `2022-11-20`
+ * @example `2022-12-31`
  */
 export function getLastDateInCurrentMonth(): string {
   const date = new Date();

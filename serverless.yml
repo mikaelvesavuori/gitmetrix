@@ -5,7 +5,7 @@ provider:
   runtime: nodejs18.x
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'eu-north-1'}
-  memorySize: ${opt:memory, 1024}
+  memorySize: ${opt:memory, 512}
   timeout: 10
   logRetentionInDays: 7
   versionFunctions: false
@@ -21,15 +21,12 @@ provider:
     minimumCompressionSize: 1024
 
 plugins:
-  - serverless-webpack
+  - serverless-esbuild
   - serverless-offline
   - serverless-iam-roles-per-function
 
 package:
   individually: true
-  patterns:
-    - node_modules/aws-sdk/**
-    - node_modules/aws-lambda/**
 
 custom:
   config:
@@ -43,11 +40,6 @@ custom:
       dev: 0
       test: 0
     apiGatewayCachingTtlValue: ${self:custom.aws.apiGatewayCachingTtl.${self:provider.stage}, self:custom.aws.apiGatewayCachingTtl.test} # See: https://forum.serverless.com/t/api-gateway-custom-authorizer-caching-problems/4695
-  webpack:
-    webpackConfig: 'webpack.config.js'
-    includeModules: true
-    packager: 'npm'
-    excludeFiles: ./**/*.test.ts
 
 functions:
   Authorizer:
