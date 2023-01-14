@@ -20,8 +20,8 @@ export function getFirstDateInCurrentMonth(): string {
  */
 export function getLastDateInCurrentMonth(): string {
   const date = new Date();
-  const month = date.getMonth() + 1;
-  const year = date.getFullYear();
+  const month = date.getUTCMonth() + 1;
+  const year = date.getUTCFullYear();
   const day = new Date(year, month).toISOString().split('T')[0].substring(8);
 
   return `${year}-${month}-${day}`;
@@ -39,7 +39,7 @@ export function getCurrentDate(noDashes = false): string {
   const date = new Date();
   const day = makeTwoDigitDate(date, 'day');
   const month = makeTwoDigitDate(date.getMonth() + 1, 'day');
-  const year = date.getFullYear();
+  const year = date.getUTCFullYear();
 
   const dateString = `${year}-${month}-${day}`;
 
@@ -52,8 +52,8 @@ export function getCurrentDate(noDashes = false): string {
  */
 export function makeTwoDigitDate(date: Date | number, unit: 'day' | 'month'): string {
   const value = (() => {
-    if (unit === 'day') return typeof date === 'number' ? `${date}` : `${date.getDate()}`;
-    if (unit === 'month') return typeof date === 'number' ? `${date}` : `${date.getMonth()}`;
+    if (unit === 'day') return typeof date === 'number' ? `${date}` : `${date.getUTCDate()}`;
+    if (unit === 'month') return typeof date === 'number' ? `${date}` : `${date.getUTCMonth()}`;
     throw new InvalidDateUnitError();
   })();
 
@@ -71,7 +71,7 @@ export function makeTwoDigitDate(date: Date | number, unit: 'day' | 'month'): st
 export function getDateBefore(noDashes = false): string {
   const today = new Date(getCurrentDate());
   const yesterday = new Date(today);
-  yesterday.setDate(today.getDate() - 1);
+  yesterday.setDate(today.getUTCDate() - 1);
 
   const dateString = yesterday.toISOString().split('T')[0];
 

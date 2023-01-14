@@ -11,9 +11,9 @@ import {
 
 // Shared setup
 const date = new Date();
-const month = date.getMonth() + 1;
-const year = date.getFullYear();
-const day = date.getDate();
+const month = date.getUTCMonth() + 1;
+const year = date.getUTCFullYear();
+const day = date.getUTCDate();
 const lastDay = new Date(year, month).toISOString().split('T')[0].substring(8);
 
 test.serial('It should get the first date in the current month in `YYYY-MM-DD` format', (t) => {
@@ -75,7 +75,7 @@ test.serial('It should add a leading zero if day value is below 10', (t) => {
 test.serial('It should get the date of the day before today in `YYYY-MM-DD` format', (t) => {
   const today = new Date(getCurrentDate());
   const yesterday = new Date(today);
-  yesterday.setDate(today.getDate() - 1);
+  yesterday.setDate(today.getUTCDate() - 1);
   const expected = yesterday.toISOString().split('T')[0];
 
   const response = getDateBefore();
@@ -86,7 +86,7 @@ test.serial('It should get the date of the day before today in `YYYY-MM-DD` form
 test.serial('It should get the date of the day before today in `YYYYMMDD` format', (t) => {
   const today = new Date(getCurrentDate());
   const yesterday = new Date(today);
-  yesterday.setDate(today.getDate() - 1);
+  yesterday.setDate(today.getUTCDate() - 1);
   const expected = yesterday.toISOString().split('T')[0].replaceAll('-', '');
 
   const response = getDateBefore(true);

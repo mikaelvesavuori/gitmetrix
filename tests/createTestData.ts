@@ -69,7 +69,7 @@ async function createTestDataController(dataCount = DEFAULT_COUNT) {
   const demoData: any = [];
   for (let index = 0; index < dataCount; index++) {
     const date = new Date('2022-01-01');
-    date.setDate(date.getDate() + index);
+    date.setDate(date.getUTCDate() + index);
     const formattedDate = date.toISOString().split('T')[0].replaceAll('-', '');
     demoData.push(createDemoMetric(formattedDate));
   }

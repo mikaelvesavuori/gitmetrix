@@ -1,4 +1,4 @@
-# `gitmetrix` 🚀 🧑‍🚀 🧑🏿‍🚀 🧑🏻‍🚀 👩‍🚀 📈
+# Gitmetrix 🚀 🧑‍🚀 🧑🏿‍🚀 🧑🏻‍🚀 👩‍🚀 📈
 
 ![Build Status](https://github.com/mikaelvesavuori/gitmetrix/workflows/main/badge.svg) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mikaelvesavuori_gitmetrix&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mikaelvesavuori_gitmetrix) [![CodeScene Code Health](https://codescene.io/projects/33250/status-badges/code-health)](https://codescene.io/projects/33250) [![CodeScene System Mastery](https://codescene.io/projects/33250/status-badges/system-mastery)](https://codescene.io/projects/33250) [![codecov](https://codecov.io/gh/mikaelvesavuori/gitmetrix/branch/main/graph/badge.svg?token=1VZWBO88Q8)](https://codecov.io/gh/mikaelvesavuori/gitmetrix) [![Maintainability](https://api.codeclimate.com/v1/badges/adb152e805d9447c83b2/maintainability)](https://codeclimate.com/github/mikaelvesavuori/gitmetrix/maintainability)
 
@@ -6,7 +6,7 @@
 
 ---
 
-With `gitmetrix` you get the possibility to extract a set of core Git metrics ("engineering metrics") for a given repository and time span:
+With Gitmetrix you get the possibility to extract a set of core Git metrics ("engineering metrics") for a given repository and time span:
 
 ```json
 {
@@ -92,15 +92,15 @@ It also helps you get some more interesting metrics:
 - **Pick-up time**: How long does it take to start doing a code review, from "ready for review" to "review submitted"?
 - **Review time**: How long does a code review take, from a review being completed to the commit being merged/closed?
 
-And it's all quite simple: Just deploy `gitmetrix` and pass your repository's GitHub webhooks to it!
+And it's all quite simple: Just deploy Gitmetrix and pass your repository's GitHub webhooks to it!
 
-## How `gitmetrix` works
+## How Gitmetrix works
 
-Like [dorametrix](https://github.com/mikaelvesavuori/dorametrix), `gitmetrix` is a serverless web service that collects and represents specific delivery-related webhook events sent to it, which are then stored in a database. As a user, you can request these metrics which are calculated from those same stored events.
+Like [dorametrix](https://github.com/mikaelvesavuori/dorametrix), Gitmetrix is a serverless web service that collects and represents specific delivery-related webhook events sent to it, which are then stored in a database. As a user, you can request these metrics which are calculated from those same stored events.
 
-**Because all metrics are stored beginning on the date at which you start sending webhook events to `gitmetrix` you will not be able to retrieve statistics from any time before that.**
+**Because all metrics are stored beginning on the date at which you start sending webhook events to Gitmetrix you will not be able to retrieve statistics from any time before that.**
 
-`gitmetrix` **currently integrates only through GitHub via webhooks and is adapted (out-of-the-box) for an AWS environment**. See the [Support](#support) section for more details — it's not impossible getting it to work in other clouds or Git providers!
+Gitmetrix **currently integrates only through GitHub via webhooks and is adapted (out-of-the-box) for an AWS environment**. See the [Support](#support) section for more details — it's not impossible getting it to work in other clouds or Git providers!
 
 ## Need even more metrics?
 
@@ -174,7 +174,7 @@ Run `npm run deploy`.
 
 ## Logging and metrics
 
-`gitmetrix` uses [mikrolog](https://github.com/mikaelvesavuori/mikrolog) and [mikrometric](https://github.com/mikaelvesavuori/mikrometric) for logging and metrics respectively.
+Gitmetrix uses [mikrolog](https://github.com/mikaelvesavuori/mikrolog) and [mikrometric](https://github.com/mikaelvesavuori/mikrometric) for logging and metrics respectively.
 
 Logs will have a richly structured format and metrics for cached and uncached reads will be output to CloudWatch Logs (using Embedded Metrics Format, under the covers). See the below image for a basic example of how you can see the number of uncached vs cached reads in CloudWatch.
 
@@ -203,7 +203,7 @@ _Note that not all of the individual fine-grained events are actually used, but 
 
 Normally, if possible, you should use [GitHub webhook secrets](https://docs.github.com/en/developers/webhooks-and-events/webhooks/securing-your-webhooks). These need to be verified against a hash constructed based on the request body and a secret. The "secret" is provided by you so this is easy enough to do, but in AWS the Lambda Authorizer will not have access to the request body. This makes it practically unfeasible to implement webhook secrets — for AWS, at least in this way.
 
-The approach used in `gitmetrix` is instead to make the best of the situation and:
+The approach used in Gitmetrix is instead to make the best of the situation and:
 
 1. Require an `authorization` query string parameter which is verified by a [Lambda Authorizer function](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-use-lambda-authorizer.html), and
 2. Check for the presence of an `X-GitHub-Event` header.
@@ -309,33 +309,31 @@ GET {BASE_URL}/GetMetrics?repo=SOMEORG/SOMEREPO&from=20221228&to=20221229
 
 ### Anonymous data
 
-`gitmetrix` does not collect, store, or process any details on a given individual and their work. All data is strictly anonymous and aggregated. You should feel entirely confident that nothing invasive is happening with the data handled with `gitmetrix`.
+Gitmetrix does not collect, store, or process any details on a given individual and their work. All data is strictly anonymous and aggregated. You should feel entirely confident that nothing invasive is happening with the data handled with Gitmetrix.
 
 ### What about the authorization token in the query string parameter?
 
-This is a totally normal and acceptable way of passing the value. However, the value could potentially be logged by intermediary layers. `gitmetrix` does nothing with the value and it's unlikely that there is anything in the AWS infrastructure-as-code that logs the value either.
+This is a totally normal and acceptable way of passing the value. However, the value could potentially be logged by intermediary layers. Gitmetrix does nothing with the value and it's unlikely that there is anything in the AWS infrastructure-as-code that logs the value either.
 
 ### Metrics and history
 
 The granularity of metrics collection is on the daily level, in the format `YYYYMMDD` (e.g. `20221020`). While you can get a range of dates, you can't get more exact responses than a full day.
 
-**The most recent date you can get metrics for is the day prior, i.e. "yesterday"**. The reason for this is partly because it makes no real sense to get incomplete datasets, as well as because `gitmetrix` caches all data requests. Caching a dataset with incomplete data would not be very good.
+**The most recent date you can get metrics for is the day prior, i.e. "yesterday"**. The reason for this is partly because it makes no real sense to get incomplete datasets, as well as because Gitmetrix caches all data requests. Caching a dataset with incomplete data would not be very good.
 
 ### Time
 
 #### Time zone used
 
-This uses GMT/Zulu time.
+Gitmetrix uses UTC/GMT/Zulu time.
 
 #### How timestamps are set
 
-Timestamps are set internally in `gitmetrix` and generated on the current local time of the backend service/function.
+Timestamps are set internally in Gitmetrix and generated based on the UTC/GMT/Zulu time.
 
 **This should be fine for most circumstances but will possibly be inaccurate if you have teams that are very widely distributed**, in which case certain events may be posted to the wrong date.
 
-I haven't consolidated on a specific approach as being "good enough" while also being dynamic and easy to grok. While I acknowledge this as a small limitation, in reality, it may not be that meaningful given that you are looking at aggregate team performance over longer periods than one or two days.
-
-_If you have a proposal for a solution that you think makes sense, please consider making a pull request, raising an Issue, or otherwise communicating how this could be fixed in a coming release of `gitmetrix`._
+_I am planning to add similar support for offsets and querying as is used in [Dorametrix](https://github.com/mikaelvesavuori/dorametrix)_.
 
 ### Database design
 
@@ -368,7 +366,7 @@ Metrics are [incremented atomically](https://docs.aws.amazon.com/amazondynamodb/
 
 ### Caching
 
-On any given metrics retrieval request, `gitmetrix` will behave in one of two ways:
+On any given metrics retrieval request, Gitmetrix will behave in one of two ways:
 
 - **Cached filled**: Return the cached content.
 - **Cache empty**: Query > Store response in cache > Return response.
@@ -480,7 +478,7 @@ Compares the diff between `body.pull_request.created_at` and `body.pull_request.
 
 ### Solution diagram
 
-_As it stands currently, `gitmetrix` is implemented in an AWS-oriented manner. This should be fairly easy to modify so it works with other cloud platforms and with other persistence technologies. If there is sufficient demand, I might add extended support. Or you do it! Just make a PR and I'll see how we can proceed._
+_As it stands currently, Gitmetrix is implemented in an AWS-oriented manner. This should be fairly easy to modify so it works with other cloud platforms and with other persistence technologies. If there is sufficient demand, I might add extended support. Or you do it! Just make a PR and I'll see how we can proceed._
 
 !["gitmetrix diagram"](./diagrams/gitmetrix-diagram.png)
 
@@ -498,7 +496,7 @@ Please see the [generated documentation site](https://gitmetrix.pages.dev) for m
 
 ### What about more Git integrations?
 
-`gitmetrix` **currently integrates only through GitHub via webhooks**. The internal logic however allows for extending with any number of "parsers" that are specific to any version control software (VCS) such as Bitbucket or Azure DevOps. Ideally, to function similarly, the VCS should support webhooks so the experience is equivalent to the current state of `gitmetrix`.
+Gitmetrix **currently integrates only through GitHub via webhooks**. The internal logic however allows for extending with any number of "parsers" that are specific to any version control software (VCS) such as Bitbucket or Azure DevOps. Ideally, to function similarly, the VCS should support webhooks so the experience is equivalent to the current state of Gitmetrix.
 
 _Consider making a pull request, starting an Issue, or otherwise informing of your interest in this, if it's important to you or if you have ideas for resolving this in a good way._
 
@@ -506,7 +504,7 @@ _Consider making a pull request, starting an Issue, or otherwise informing of yo
 
 That's absolutely doable!
 
-The code is already prepared to be extensible for other databases (repositories) and other compute solutions than AWS Lambda. You could relatively easily make the changes by adding a repository to handle the concrete implementation details of your chosen database and adding some other variant of the wrapping handler functions, while still being able to use all the same internal logic. Except for these bigger details, there might be smaller stuff we need to take care of to make `gitmetrix` truly support more platforms—but none of this is a real blocker.
+The code is already prepared to be extensible for other databases (repositories) and other compute solutions than AWS Lambda. You could relatively easily make the changes by adding a repository to handle the concrete implementation details of your chosen database and adding some other variant of the wrapping handler functions, while still being able to use all the same internal logic. Except for these bigger details, there might be smaller stuff we need to take care of to make Gitmetrix truly support more platforms—but none of this is a real blocker.
 
 _Consider making a pull request, starting an Issue, or otherwise informing of your interest in this, if it's important to you or if you have ideas for resolving this in a good way._
 
@@ -515,7 +513,7 @@ _Consider making a pull request, starting an Issue, or otherwise informing of yo
 ## Ideas for improvements
 
 - "Direct parser", for straight API calls rather than using webhooks?
-- Replace dates (`20221030`) with some type of normalized Unix timestamp?
+- Replace dates (`20221030`) with some type of normalized Unix timestamp such as used by Dorametrix
 - Get a dynamic response ("sliding window"): `{BASE_URL}/GetMetrics?repo=myservice&last=7`
 - "Coding time metric", measuring the time between an initial commit and when a PR is ready to review?
 - Integration and system tests?

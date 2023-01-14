@@ -22,6 +22,8 @@ class Result implements ResultService {
      * The date is set internally rather than from GH webhook data as it's not
      * completely clear which fields will be authoritative in every case.
      *
+     * The time zone will be normalized to UTC/GMT+0/Zulu time ("London time").
+     *
      * Further, the delay should normally be in the span of a few seconds so
      * any latency will most likely be very minor.
      */
