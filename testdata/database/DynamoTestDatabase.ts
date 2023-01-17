@@ -25,7 +25,7 @@ const testDataItem = [
  */
 export const testCachedMetrics = {
   repo: 'SOMEORG/SOMEREPO',
-  period: { from: '1642636800', to: '1643673599', offset: 0 },
+  period: { from: '20220120', to: '20220131', offset: 0 },
   total: {
     additions: 576,
     approved: 691,
