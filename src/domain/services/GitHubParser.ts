@@ -1,3 +1,5 @@
+import { getDiffInSeconds, zuluToUnix } from 'chrono-utils';
+
 import {
   Parser,
   ParsedParamsOutput,
@@ -7,15 +9,13 @@ import {
 import { ResultService } from '../../interfaces/Result';
 import { MetricInputDto } from '../../interfaces/MetricInput';
 
-import { getDiffInSeconds, zuluToUnix } from '../../infrastructure/frameworks/time';
-
 import {
   MissingRepoNameError,
   NoCommentParsingMatchError,
   NoParsingMatchFoundError,
   NoPullRequestParsingMatchError,
   NoReviewParsingMatchError
-} from '../../application/errors';
+} from '../../application/errors/errors';
 
 /**
  * @description Parser that is adapted for GitHub webhooks.
@@ -181,7 +181,7 @@ export class GitHubParser implements Parser {
 
     return this.resultService.produceResult({
       type: 'PickupTime',
-      change: getDiffInSeconds(createdAt, submittedAt)
+      change: getDiffInSeconds(createdAt.toString(), submittedAt.toString())
     }) as ParsedResult;
   }
 
@@ -194,7 +194,7 @@ export class GitHubParser implements Parser {
 
     return this.resultService.produceResult({
       type: 'ReviewTime',
-      change: getDiffInSeconds(submittedAt, mergedAt)
+      change: getDiffInSeconds(submittedAt.toString(), mergedAt.toString())
     }) as ParsedResult;
   }
 }

@@ -1,34 +1,20 @@
 {
   "average": {
-    "additions": 165,
+    "additions": 206,
     "approved": 6,
-    "changedFiles": 9,
+    "changedFiles": 2,
     "changesRequested": 1,
     "closed": 1,
-    "comments": 3,
-    "deletions": 2,
+    "comments": 2,
+    "deletions": 3,
     "merged": 0,
     "opened": 2,
     "pickupTime": "00:00:00:00",
     "pushed": 3,
-    "reviewTime": "00:00:31:05"
+    "reviewTime": "00:00:05:45"
   },
   "daily": {
-    "20221010": {
-      "additions": 82,
-      "approved": 7,
-      "changedFiles": 23,
-      "changesRequested": 2,
-      "closed": 3,
-      "comments": 5,
-      "deletions": 2,
-      "merged": 1,
-      "opened": 2,
-      "pickupTime": "00:00:00:00",
-      "pushed": 2,
-      "reviewTime": "00:01:21:46"
-    },
-    "20221014": {
+    "20221013": {
       "additions": 0,
       "approved": 0,
       "changedFiles": 0,
@@ -42,7 +28,7 @@
       "pushed": 0,
       "reviewTime": "00:00:00:00"
     },
-    "20221030": {
+    "20221029": {
       "additions": 412,
       "approved": 12,
       "changedFiles": 3,
@@ -59,21 +45,22 @@
   },
   "period": {
     "from": "20221010",
+    "offset": 0,
     "to": "20221030"
   },
-  "repo": "something",
+  "repo": "SOMEORG/SOMEREPO",
   "total": {
-    "additions": 494,
-    "approved": 19,
-    "changedFiles": 26,
-    "changesRequested": 4,
-    "closed": 4,
-    "comments": 8,
-    "deletions": 7,
-    "merged": 1,
-    "opened": 6,
+    "additions": 412,
+    "approved": 12,
+    "changedFiles": 3,
+    "changesRequested": 2,
+    "closed": 1,
+    "comments": 3,
+    "deletions": 5,
+    "merged": 0,
+    "opened": 4,
     "pickupTime": "00:00:00:00",
-    "pushed": 8,
-    "reviewTime": "00:01:33:16"
+    "pushed": 6,
+    "reviewTime": "00:00:11:30"
   }
 }

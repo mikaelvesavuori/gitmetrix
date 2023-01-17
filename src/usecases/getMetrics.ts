@@ -1,29 +1,73 @@
 import { createNewMetrics } from '../domain/services/Metrics';
 
-import { GetMetricsInput } from '../interfaces/GetMetrics';
 import { CleanedItem } from '../interfaces/Item';
-
-import { validateDates } from '../infrastructure/frameworks/validateDates';
-
-import { InvalidDateError, MissingRepoNameError } from '../application/errors';
+import { Repository } from '../interfaces/Repository';
+import { RequestDTO } from '../interfaces/Input';
+import { MetricsResult } from '../interfaces/Metrics';
 
 /**
  * @description Get metrics from persistence.
  */
-export async function getMetricsUsecase(input: GetMetricsInput) {
-  const { repository, repoName, fromDate } = input;
+export async function getMetrics(repository: Repository, input: RequestDTO) {
+  const cachedMetrics = await getCachedMetricsFromDatabase(input, repository);
+  if (cachedMetrics) return cachedMetrics;
 
-  if (!repoName) throw new MissingRepoNameError();
-  if (!validateDates(fromDate, input.toDate)) throw new InvalidDateError();
+  const metricsData = await getMetricsFromDatabase(input, repository);
+  const metrics = compileResultMetrics(input, metricsData);
 
-  const dbMetrics: CleanedItem[] = await repository.getMetrics(repoName, fromDate, input.toDate);
-  if (!dbMetrics || dbMetrics.length === 0) return [];
+  await cacheMetrics(input, repository, metrics);
+
+  return metrics;
+}
+
+/**
+ * @description Get cached metrics from repository.
+ */
+async function getCachedMetricsFromDatabase(
+  input: RequestDTO,
+  repository: Repository
+): Promise<MetricsResult | void> {
+  const { repo, from, to } = input;
+
+  const cachedData = await repository.getCachedMetrics({ key: repo, from: from, to: to });
+
+  if (Object.keys(cachedData).length > 0) return cachedData;
+}
+
+/**
+ * @description Get fresh metrics from repository.
+ */
+async function getMetricsFromDatabase(input: RequestDTO, repository: Repository) {
+  const { repo, from, to } = input;
+
+  return await repository.getMetrics({
+    key: repo,
+    from: from,
+    to: to
+  });
+}
+
+/**
+ * @description Cache Metrics object in repository.
+ */
+async function cacheMetrics(input: RequestDTO, repository: Repository, metrics: MetricsResult) {
+  const { repo, from, to } = input;
+
+  await repository.cacheMetrics({ key: repo, range: `${from}_${to}`, metrics });
+}
+
+/**
+ * @description Return final Metrics object.
+ */
+function compileResultMetrics(input: RequestDTO, metricsData: CleanedItem[]): MetricsResult {
+  const { repo, from, to, offset } = input;
 
   const metrics = createNewMetrics();
   return metrics.makeMetrics({
-    items: dbMetrics,
-    repoName,
-    fromDate,
-    toDate: input.toDate || ''
+    items: metricsData,
+    repo,
+    from,
+    to,
+    offset
   });
 }

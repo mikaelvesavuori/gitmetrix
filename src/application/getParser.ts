@@ -3,7 +3,7 @@ import { GitHubParser } from '../domain/services/GitHubParser';
 
 import { Parser } from '../interfaces/Parser';
 
-import { NoMatchingParserError } from './errors';
+import { NoMatchingParserError } from './errors/errors';
 
 /**
  * @description Infer the correct parser to use, based on metadata from headers.

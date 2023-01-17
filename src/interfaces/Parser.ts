@@ -12,27 +12,27 @@ export interface Parser {
  */
 export type ParsedResult = {
   type: ResultType;
-  date: EventDate;
-  repoName: RepoName;
+  timestamp: EventTimestamp;
+  repo: RepoName;
   change: ChangeType;
 };
-
-/**
- * @description Date in the format `YYYYMMDD`.
- */
-export type EventDate = string;
-
-/**
- * @description The name of the repository for which we are
- * measuring changes and performance.
- */
-export type RepoName = string;
 
 /**
  * @description Final parsed result from `Result` domain service
  * for simple changes that do not include a more complex change.
  */
 export type ParsedResultBasic = Omit<ParsedResult, 'change'>;
+
+/**
+ * @description Timestamp in Unix format.
+ */
+export type EventTimestamp = string;
+
+/**
+ * @description The name of the repository for which we are
+ * measuring changes and performance.
+ */
+export type RepoName = string;
 
 /**
  * @description The type of result or change that we can measure.

@@ -5,9 +5,10 @@ import { CleanedItem } from './Item';
  */
 export type MakeMetricsInput = {
   items: CleanedItem[];
-  repoName: string;
-  fromDate: string;
-  toDate: string;
+  repo: string;
+  from: string;
+  to: string;
+  offset: number;
 };
 
 /**
@@ -15,18 +16,33 @@ export type MakeMetricsInput = {
  */
 export type MetricsResult = {
   repo: string;
-  period: TimePeriod;
+  period: Period;
   total: MetricSet;
   daily: DailyMetricSet;
   average: MetricSet;
 };
 
 /**
- * @description A period of time for a metric.
+ * @description Time period object.
  */
-export type TimePeriod = {
+type Period = {
+  /**
+   * @description The date the metrics start from.
+   * @example `20221201`
+   */
   from: string;
+  /**
+   * @description The date the metrics end at (inclusive).
+   * @example `20221231`
+   */
   to: string;
+  /**
+   * @description The UTC timezone offset used.
+   * @example `0`
+   * @example `-5`
+   * @example `7`
+   */
+  offset: number;
 };
 
 /**

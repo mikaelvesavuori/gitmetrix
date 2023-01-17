@@ -1,7 +1,7 @@
+import { getCurrentDate, getTimestampForInputDate } from 'chrono-utils';
+
 import { ParsedResult, ParsedResultBasic } from '../../interfaces/Parser';
 import { ResultService, ResultServiceInput } from '../../interfaces/Result';
-
-import { getCurrentDate } from '../../infrastructure/frameworks/date';
 
 /**
  * @description Factory function that returns a new `Result` domain service.
@@ -14,8 +14,8 @@ export function createNewResultService() {
  * @description The `Result` domain service produces ready-to-use, parsed results.
  */
 class Result implements ResultService {
-  date = '';
-  repoName = '';
+  timestamp: string;
+  repo = '';
 
   constructor() {
     /**
@@ -27,7 +27,7 @@ class Result implements ResultService {
      * Further, the delay should normally be in the span of a few seconds so
      * any latency will most likely be very minor.
      */
-    this.date = getCurrentDate(true);
+    this.timestamp = getTimestampForInputDate(getCurrentDate(true));
   }
 
   /**
@@ -38,14 +38,15 @@ class Result implements ResultService {
     const { type } = input;
     const result: Record<string, any> = {
       type,
-      date: this.date,
-      repoName: this.repoName
+      timestamp: this.timestamp,
+      repo: this.repo
     };
 
     if (input.change) {
       result['change'] = input.change;
       return result as ParsedResult;
     }
+
     return result as ParsedResultBasic;
   }
 
@@ -53,6 +54,6 @@ class Result implements ResultService {
    * @description Sets the repository name to use in the `Result` class.
    */
   public setRepoName(repoName: string) {
-    this.repoName = repoName;
+    this.repo = repoName;
   }
 }

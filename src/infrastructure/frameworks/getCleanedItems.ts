@@ -1,9 +1,9 @@
+import { prettifyTime } from 'chrono-utils';
+
 import { DynamoItem, Entry, StringRepresentation } from '../../interfaces/DynamoDb';
 import { CleanedItem } from '../../interfaces/Item';
 
-import { prettifyTime } from './time';
-
-import { NoMappedKeyError } from '../../application/errors';
+import { NoMappedKeyError } from '../../application/errors/errors';
 
 /**
  * @description Clean up and return items in a normalized `CleanedItem` format.

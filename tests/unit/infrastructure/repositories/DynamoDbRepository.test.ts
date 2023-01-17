@@ -4,6 +4,8 @@ import { createNewDynamoRepository } from '../../../../src/infrastructure/reposi
 
 import { setEnv, clearEnv } from '../../../testUtils';
 
+import { testCachedMetrics } from '../../../../testdata/database/DynamoTestDatabase';
+
 const expected = [
   {
     20221115: {
@@ -25,10 +27,28 @@ const expected = [
 
 test.serial('It should get uncached data', async (t) => {
   setEnv();
-
   const repo = createNewDynamoRepository();
 
-  const response = await repo.getMetrics('something', '20221010', '20221231');
+  const response = await repo.getMetrics({
+    key: 'SOMEORG/SOMEREPO',
+    from: '20221010',
+    to: '20221231'
+  });
+
+  t.deepEqual(response, expected);
+  clearEnv();
+});
+
+test.serial('It should get an empty array if no match is found for fresh metrics', async (t) => {
+  setEnv();
+  const expected: any = [];
+  const repo = createNewDynamoRepository();
+
+  const response = await repo.getMetrics({
+    key: 'asdf',
+    from: '20230101',
+    to: '20230102'
+  });
 
   t.deepEqual(response, expected);
   clearEnv();
@@ -36,18 +56,49 @@ test.serial('It should get uncached data', async (t) => {
 
 test.serial('It should get cached data', async (t) => {
   setEnv();
-  process.env.USE_CACHED_TEST_DATA = 'true';
   const repo = createNewDynamoRepository();
 
-  const response = await repo.getMetrics('something', '20221010', '20221020');
+  const response = await repo.getCachedMetrics({
+    key: 'SOMEORG/SOMEREPO',
+    from: '20220101',
+    to: '20220131'
+  });
+
+  t.deepEqual(response, testCachedMetrics);
+  clearEnv();
+});
+
+test.serial('It should get an empty object if no match is found for cached metrics', async (t) => {
+  setEnv();
+  const expected: Record<string, any> = {};
+  const repo = createNewDynamoRepository();
+
+  const response = await repo.getCachedMetrics({
+    key: 'asdf',
+    from: '20230101',
+    to: '20230102'
+  });
 
   t.deepEqual(response, expected);
-  process.env.USE_CACHED_TEST_DATA = '';
+  clearEnv();
+});
+
+test.serial('It should cache metrics', async (t) => {
+  setEnv();
+  const repo = createNewDynamoRepository();
+
+  await repo.cacheMetrics({
+    key: 'asdf',
+    range: '20230101_20230102',
+    metrics: testCachedMetrics
+  });
+
+  t.pass();
   clearEnv();
 });
 
 /**
- * NEGATIVE TEST
+ * NEGATIVE TESTS
  */
 
 test.serial(

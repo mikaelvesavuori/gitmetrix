@@ -6,7 +6,7 @@ export class MissingRepoNameError extends Error {
   constructor() {
     super();
     this.name = 'MissingRepoNameError';
-    const message = `Input is missing the repo name in the "full_name" field!`;
+    const message = `Input is missing the repository name!`;
     this.message = message;
     this.cause = {
       statusCode: 400
@@ -79,36 +79,6 @@ export class NoCommentParsingMatchError extends Error {
 }
 
 /**
- * @description The error is fired when provided dates won't validate.
- */
-export class InvalidDateError extends Error {
-  constructor() {
-    super();
-    this.name = 'InvalidDateError';
-    const message = `Invalid dates passed in! Please verify the provided dates.`;
-    this.message = message;
-    this.cause = {
-      statusCode: 400
-    };
-  }
-}
-
-/**
- * @description The error is fired when a start date occurs before an end date.
- */
-export class InvalidDateOrderError extends Error {
-  constructor() {
-    super();
-    this.name = 'InvalidDateOrderError';
-    const message = `Start date is before end date!`;
-    this.message = message;
-    this.cause = {
-      statusCode: 400
-    };
-  }
-}
-
-/**
  * @description Missing required environment variables when setting up DynamoDB.
  */
 export class MissingEnvironmentVariablesDynamoError extends Error {
@@ -142,10 +112,10 @@ export class NoMappedKeyError extends Error {
 /**
  * @description Used when an expected `authorization` query string parameter is missing.
  */
-export class MissingAuthorizationQueryStringParameterError extends Error {
+export class MissingAuthorizationError extends Error {
   constructor() {
     super();
-    this.name = 'MissingAuthorizationQueryStringParameterError';
+    this.name = 'MissingAuthorizationError';
     const message = `Missing an expected value in the "authorization" query string parameter!`;
     this.message = message;
     this.cause = {
@@ -185,16 +155,66 @@ export class NoMatchingParserError extends Error {
 }
 
 /**
- * @description Used when an incompatible date unit is encountered.
+ * @description Used when a provided offset is not valid.
  */
-export class InvalidDateUnitError extends Error {
+export class InvalidOffsetError extends Error {
   constructor() {
     super();
-    this.name = 'InvalidDateUnitError';
-    const message = `Incorrect date unit, must be 'day' or 'month'!`;
+    this.name = 'InvalidOffsetError';
+    const message = 'Offset in hours must be provided as a number between -12 and 12!';
     this.message = message;
+    //@ts-ignore
     this.cause = {
       statusCode: 400
+    };
+  }
+}
+
+/**
+ * @description Used when all possible input query parameters are missing.
+ */
+export class MissingRequiredInputParamsError extends Error {
+  constructor() {
+    super();
+    this.name = 'MissingRequiredInputParamsError';
+    const message =
+      'Unable to perform a query as either "to"/"from" or "last" parameters are missing.';
+    this.message = message;
+    //@ts-ignore
+    this.cause = {
+      statusCode: 500
+    };
+  }
+}
+
+/**
+ * @description Used when a queried date is out of range.
+ */
+export class OutOfRangeQueryError extends Error {
+  constructor() {
+    super();
+    this.name = 'OutOfRangeQueryError';
+    const message = 'The queried date is out of range.';
+    this.message = message;
+    //@ts-ignore
+    this.cause = {
+      statusCode: 500
+    };
+  }
+}
+
+/**
+ * @description Used when all mutually exclusive query parameters are used at the same time.
+ */
+export class TooManyInputParamsError extends Error {
+  constructor() {
+    super();
+    this.name = 'TooManyInputParamsError';
+    const message = 'To perform a query use either "to"/"from" or "last" parameters.';
+    this.message = message;
+    //@ts-ignore
+    this.cause = {
+      statusCode: 500
     };
   }
 }

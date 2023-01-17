@@ -9,7 +9,7 @@ import { getRepo } from '../infrastructure/frameworks/getRepo';
 /**
  * @description Add one or more metrics.
  */
-export async function addMetricUsecase(input: MetricInputDto) {
+export async function addMetric(input: MetricInputDto) {
   const headers: Record<string, any> = getLowerCaseHeaders(input.headers || {});
   input.headers = headers;
 

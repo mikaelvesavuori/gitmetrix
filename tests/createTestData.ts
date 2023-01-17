@@ -4,14 +4,14 @@ import { TestDataRepository } from './testDataRepository';
 const REGION = process.env.REGION || 'eu-north-1';
 const TABLE_NAME = process.env.TABLE_NAME || 'gitmetrix';
 const REPO_NAME = process.env.REPO_NAME || 'SOMEORG/SOMEREPO';
-const DEFAULT_COUNT = process.env.DEFAULT_COUNT || 365;
+const DEFAULT_COUNT = process.env.DEFAULT_COUNT || 30;
 
 /**
  * @description Outputs a valid metric object.
  */
-function createDemoMetric(date: string) {
+function createDemoMetric(timestamp: string) {
   return {
-    [date]: {
+    [timestamp]: {
       additions: randomInteger(),
       approved: randomInteger(),
       changedFiles: randomInteger(),
@@ -40,13 +40,11 @@ function randomInteger(maxValue = 100, addLeadingZero = false) {
 }
 
 /**
- * @description Generates a random time signature such as `02:13:51:04`.
+ * @description Generates a random time that will later be read back in the format `02:13:51:04`.
+ * Cap at a full day.
  */
 function randomTime() {
-  return `${randomInteger(3, true)}:${randomInteger(24, true)}:${randomInteger(
-    59,
-    true
-  )}:${randomInteger(59, true)}`;
+  return Math.floor(Math.random() * 86400);
 }
 
 /**
@@ -68,10 +66,9 @@ async function writeMetrics(metrics: Record<string, any>[]) {
 async function createTestDataController(dataCount = DEFAULT_COUNT) {
   const demoData: any = [];
   for (let index = 0; index < dataCount; index++) {
-    const date = new Date('2022-01-01');
+    const date = new Date('2022-10-01');
     date.setDate(date.getUTCDate() + index);
-    const formattedDate = date.toISOString().split('T')[0].replaceAll('-', '');
-    demoData.push(createDemoMetric(formattedDate));
+    demoData.push(createDemoMetric(`${date.getTime()}`));
   }
 
   await writeMetrics(demoData);

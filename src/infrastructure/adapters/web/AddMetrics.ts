@@ -4,14 +4,14 @@ import { MikroMetric } from 'mikrometric';
 import { EventInput } from '../../../interfaces/Aws';
 import { MetricInputDto } from '../../../interfaces/MetricInput';
 
-import { addMetricUsecase } from '../../../usecases/addMetric';
+import { addMetric } from '../../../usecases/addMetric';
 
 import { end } from '../../frameworks/end';
 
 import { metadataConfig } from '../../../config/metadata';
 
 /**
- * @description This handles the intake of any new metrics.
+ * @description This handles the intake of new metrics.
  *
  * At this point, the intake will not previously have been able
  * to ascertain the exact type of event, so we need to take care
@@ -20,8 +20,8 @@ import { metadataConfig } from '../../../config/metadata';
 export async function handler(event: EventInput, context: Record<string, any>) {
   const logger = MikroLog.start({ metadataConfig, event, context });
   MikroMetric.start({
-    namespace: 'gitmetrix',
-    serviceName: 'gitmetrix',
+    namespace: metadataConfig.service,
+    serviceName: metadataConfig.service,
     event,
     context
   });
@@ -36,7 +36,7 @@ export async function handler(event: EventInput, context: Record<string, any>) {
       body
     };
 
-    await addMetricUsecase(inputDto);
+    await addMetric(inputDto);
 
     return end(204);
   } catch (error: any) {

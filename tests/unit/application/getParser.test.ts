@@ -1,4 +1,5 @@
 import test from 'ava';
+
 import { getParser } from '../../../src/application/getParser';
 
 /**

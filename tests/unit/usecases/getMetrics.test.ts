@@ -1,89 +1,36 @@
 import test from 'ava';
 
-import { getMetricsUsecase } from '../../../src/usecases/getMetrics';
+import { getMetrics } from '../../../src/usecases/getMetrics';
 
 import { getRepo } from '../../../src/infrastructure/frameworks/getRepo';
 
-import metrics2days from '../../../testdata/expectations/metrics-2days.json';
-import metricsRangeUntilMostRecent from '../../../testdata/expectations/metrics-range-until-most-recent.json';
+import metricsResultsFresh from '../../../testdata/expectations/metrics-results-fresh.json';
+import { testCachedMetrics } from '../../../testdata/database/LocalTestDatabase';
 
-test.serial('It should get an empty array if no metrics exist', async (t) => {
-  const expected: any = [];
+test.serial('It should get metrics', async (t) => {
+  const expected: any = metricsResultsFresh;
 
   const repository = getRepo(true);
-  const response = await getMetricsUsecase({
-    repository,
-    repoName: 'asdf',
-    fromDate: '20220101'
+  const response = await getMetrics(repository, {
+    repo: 'SOMEORG/SOMEREPO',
+    from: '1665360000000',
+    to: '1667174399000',
+    offset: 0
   });
 
   t.deepEqual(response, expected);
 });
 
-test.serial('It should get metrics for a defined range', async (t) => {
-  const expected: any = metrics2days;
+test.serial('It should get cached metrics', async (t) => {
+  const expected: any = testCachedMetrics;
 
   const repository = getRepo(true);
-  const response = await getMetricsUsecase({
-    repository,
-    repoName: 'something',
-    fromDate: '20221010',
-    toDate: '20221030'
+  const response = await getMetrics(repository, {
+    repo: 'SOMEORG/SOMEREPO',
+    from: '1642636800000',
+    to: '1643587199000',
+    offset: 0
   });
 
   t.deepEqual(response, expected);
 });
-
-test.serial('It should get metrics for a range up until the most recent metrics', async (t) => {
-  const expected: any = metricsRangeUntilMostRecent;
-
-  const repository = getRepo(true);
-  const response = await getMetricsUsecase({
-    repository,
-    repoName: 'something',
-    fromDate: '20221010'
-  });
-
-  t.deepEqual(response, expected);
-});
-
-/**
- * NEGATIVE TESTS
- */
-
-test.serial('It should throw a MissingRepoNameError if missing repository name', async (t) => {
-  const expected: any = 'MissingRepoNameError';
-
-  const repository = getRepo(true);
-  const error: any = await t.throwsAsync(
-    async () =>
-      await getMetricsUsecase({
-        repository,
-        repoName: '',
-        fromDate: '',
-        toDate: ''
-      })
-  );
-
-  t.is(error.name, expected);
-});
-
-test.serial(
-  'It should throw a InvalidDateError if missing both "fromDate" and "toDate"',
-  async (t) => {
-    const expected: any = 'InvalidDateError';
-
-    const repository = getRepo(true);
-    const error: any = await t.throwsAsync(
-      async () =>
-        await getMetricsUsecase({
-          repository,
-          repoName: 'something',
-          fromDate: '',
-          toDate: ''
-        })
-    );
-
-    t.is(error.name, expected);
-  }
-);

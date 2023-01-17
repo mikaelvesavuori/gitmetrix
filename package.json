@@ -1,7 +1,7 @@
 {
   "name": "gitmetrix",
   "description": "Helps you find your team-level engineering metrics",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "author": "Mikael Vesavuori",
   "license": "MIT",
   "keywords": [
@@ -24,7 +24,7 @@
   "scripts": {
     "start": "npx sls offline --reloadHandler",
     "test": "npm run test:licenses && npm run test:types && npm run test:unit",
-    "test:types": "npx type-coverage --at-least 97 --strict --ignore-files \"tests/**/*.ts\" --ignore-files \"*.ts\" --ignore-files \"src/application/errors/*.ts\" --ignore-files \"testdata/*.ts\"",
+    "test:types": "npx type-coverage --at-least 98 --strict --ignore-files \"tests/**/*.ts\" --ignore-files \"*.ts\" --ignore-files \"src/application/errors/*.ts\" --ignore-files \"testdata/*.ts\"",
     "test:licenses": "npx license-compliance --direct --allow 'MIT;ISC;0BSD;BSD-2-Clause;BSD-3-Clause;Apache-2.0;Unlicense;CC0-1.0'",
     "test:unit": "npx c8 -reporter=lcov ava",
     "test:createdata": "npx ts-node tests/createTestData.ts",
@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "3",
-    "@aws-sdk/client-eventbridge": "3",
+    "chrono-utils": "1",
     "mikrolog": "2",
     "mikrometric": "1"
   },
@@ -67,7 +67,7 @@
     "ts-node": "latest",
     "tslib": "2",
     "type-coverage": "2",
-    "typedoc": "0.23.23",
+    "typedoc": "0.23.24",
     "typescript": "4"
   },
   "ava": {

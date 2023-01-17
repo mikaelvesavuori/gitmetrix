@@ -6,71 +6,72 @@
 
 ---
 
-With Gitmetrix you get the possibility to extract a set of core Git metrics ("engineering metrics") for a given repository and time span:
+With Gitmetrix you get the possibility to extract a set of core Git metrics ("engineering metrics") for a given repository and time span. An example with completely made-up data might look like this:
 
 ```json
 {
-  "repo": "ORG/REPO",
+  "repo": "SOMEORG/SOMEREPO",
   "period": {
-    "from": "20221228",
-    "to": ""
+    "from": "20221005",
+    "to": "20221006",
+    "offset": 0
   },
   "total": {
-    "additions": 0,
-    "approved": 0,
-    "changedFiles": 0,
-    "changesRequested": 0,
-    "closed": 3,
-    "comments": 2,
-    "deletions": 0,
-    "merged": 0,
-    "opened": 1,
-    "pickupTime": "00:00:00:00",
-    "pushed": 5,
-    "reviewTime": "00:01:01:31"
+    "additions": 74,
+    "approved": 136,
+    "changedFiles": 187,
+    "changesRequested": 158,
+    "closed": 146,
+    "comments": 100,
+    "deletions": 76,
+    "merged": 105,
+    "opened": 27,
+    "pickupTime": "01:04:57:46",
+    "pushed": 55,
+    "reviewTime": "00:16:05:56"
   },
   "average": {
-    "additions": 0,
-    "approved": 0,
-    "changedFiles": 0,
-    "changesRequested": 0,
-    "closed": 2,
-    "comments": 1,
-    "deletions": 0,
-    "merged": 0,
-    "opened": 1,
-    "pickupTime": "00:00:20:00",
-    "pushed": 3,
-    "reviewTime": "00:00:30:46"
+    "additions": 37,
+    "approved": 68,
+    "changedFiles": 94,
+    "changesRequested": 79,
+    "closed": 73,
+    "comments": 50,
+    "deletions": 38,
+    "merged": 53,
+    "opened": 14,
+    "pickupTime": "00:14:28:53",
+    "pushed": 28,
+    "reviewTime": "00:08:02:58"
   },
   "daily": {
-    "20221228": {
-      "additions": 0,
-      "approved": 0,
-      "changedFiles": 0,
-      "changesRequested": 0,
-      "closed": 2,
-      "comments": 2,
-      "deletions": 0,
-      "merged": 0,
-      "opened": 1,
-      "pickupTime": "00:00:00:00",
+    "20221005": {
+      "additions": 35,
+      "approved": 65,
+      "changedFiles": 97,
+      "changesRequested": 73,
+      "closed": 86,
+      "comments": 61,
+      "deletions": 12,
+      "merged": 66,
+      "opened": 18,
+      "pickupTime": "00:22:30:38",
       "pushed": 3,
-      "reviewTime": "00:00:00:00"
+      "reviewTime": "00:03:30:59"
     },
-    "20221229": {
-      "additions": 0,
-      "approved": 0,
-      "changedFiles": 0,
-      "changesRequested": 0,
-      "closed": 1,
-      "comments": 0,
-      "deletions": 0,
-      "merged": 0,
-      "opened": 0,
-      "pickupTime": "00:00:20:00",
-      "pushed": 2,
-      "reviewTime": "00:01:01:31"
+    "20221006": {
+      "additions": 39,
+      "approved": 71,
+      "changedFiles": 90,
+      "changesRequested": 85,
+      "closed": 60,
+      "comments": 39,
+      "deletions": 64,
+      "merged": 39,
+      "opened": 9,
+      "pickupTime": "00:06:27:08",
+      "pushed": 52,
+      "reviewTime": "00:12:34:57"
     }
   }
 }
@@ -138,7 +139,7 @@ The below commands are the most critical ones. See `package.json` for more comma
 #### Required
 
 - `custom.config.accountNumber`: Your AWS account number.
-- `custom.config.authToken`: The "API key" or authorization token you want to use to secure your service. You will use this when calling the service.
+- `custom.config.authToken`: The "API key" or authorization token you want to use to secure your service. You will use this when getting data from the service.
 
 Note that all unit tests use a separate authorization token that you don't have to care about in regular use.
 
@@ -187,7 +188,7 @@ Create a webhook in your repository's `Settings` page. Under the `Code and autom
 For `Payload URL`—assuming you are using the default API endpoint—add your endpoint and auth token in the general format of
 
 ```
-https://RANDOM.execute-api.REGION.amazonaws.com/STAGE/AddMetrics?authorization=AUTH_TOKEN
+https://RANDOM.execute-api.REGION.amazonaws.com/STAGE/metrics?authorization=AUTH_TOKEN
 ```
 
 Next, set the content type to `application/json`, skip secrets, make sure SSL is enabled, and select the following event types to trigger the webhook:
@@ -203,12 +204,9 @@ _Note that not all of the individual fine-grained events are actually used, but 
 
 Normally, if possible, you should use [GitHub webhook secrets](https://docs.github.com/en/developers/webhooks-and-events/webhooks/securing-your-webhooks). These need to be verified against a hash constructed based on the request body and a secret. The "secret" is provided by you so this is easy enough to do, but in AWS the Lambda Authorizer will not have access to the request body. This makes it practically unfeasible to implement webhook secrets — for AWS, at least in this way.
 
-The approach used in Gitmetrix is instead to make the best of the situation and:
+The approach used in Gitmetrix is instead to make the best of the situation and require an `authorization` query string parameter with a custom authorization token. This then gets verified by a [Lambda Authorizer function](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-use-lambda-authorizer.html).
 
-1. Require an `authorization` query string parameter which is verified by a [Lambda Authorizer function](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-use-lambda-authorizer.html), and
-2. Check for the presence of an `X-GitHub-Event` header.
-
-The authorization only happens when adding metrics and not for getting metrics. This is of course customizable if you'd like. See `serverless.yml` around line 57 for more.
+All GET requests require that same token but in a more practical `Authorization` header.
 
 This approach adds a minimal security measure but is flexible enough to also work effortlessly with any integration tests you might want to run. At the end of the day an acceptable compromise solution, I hope.
 
@@ -216,88 +214,118 @@ _Consider making a pull request, starting an Issue, or otherwise informing of yo
 
 ## Using the service
 
-### Example request
+_Remember to pass your authorization token in the `Authorization` header!_
+
+### Example request: From date YYYYMMDD to date YYYYMMDD
 
 Get metrics for a specific interval:
 
 ```bash
-GET {BASE_URL}/GetMetrics?repo=SOMEORG/SOMEREPO&from=20221228&to=20221229
+GET {BASE_URL}/metrics?repo=SOMEORG/SOMEREPO&from=20221228&to=20221229
 ```
 
 | Parameter | Required | Format     | Example                     |  Description                                                   |
 | --------- | -------- | ---------- | --------------------------- | -------------------------------------------------------------- |
 | `repo`    | Yes      | `ORG/REPO` | `mikaelvesavuori/gitmetrix` | Name of repository to get metrics for                          |
 | `from`    | Yes      | `YYYYMMDD` | `20221020`                  | Set a specific date to start from                              |
-| `to`      | No       | `YYYYMMDD` | `20221020`                  | Set a specific date to end with (defaults to yesterday's date) |
+| `to`      | Yes      | `YYYYMMDD` | `20221020`                  | Set a specific date to end with (defaults to yesterday's date) |
+
+### Example request: Last X days
+
+Get metrics for a specific sliding window of time:
+
+```bash
+GET {BASE_URL}/metrics?repo=SOMEORG/SOMEREPO&last=30
+```
+
+| Parameter | Required | Format     | Example                     |  Description                               |
+| --------- | -------- | ---------- | --------------------------- | ------------------------------------------ |
+| `repo`    | Yes      | `ORG/REPO` | `mikaelvesavuori/gitmetrix` | Name of repository to get metrics for      |
+| `last`    | Yes      | Number     | `30`                        | Set a number of days to use in query range |
+
+**Note that the last and from/to patterns are mutually exclusive!**
+
+### Offset for time zone differences
+
+You can optionally offset the query to adapt to your own time zone, for example:
+
+```bash
+GET {BASE_URL}/metrics?repo=SOMEORG/SOMEREPO&last=30&offset=-4
+```
+
+| Parameter | Required | Format                        | Example |  Description                                                  |
+| --------- | -------- | ----------------------------- | ------- | ------------------------------------------------------------- |
+| `offset`  | No       | Number between `-12` and `12` | `30`    | Set an offset in hours to adapt query to time zone difference |
 
 ### Example response
 
-```json
+```ts
 {
   // Dynamically set by the response
   "repo": "SOMEORG/SOMEREPO",
   "period": {
-    "from": "20221228",
-    "to": "20221229"
+    "from": "20221005",
+    "to": "20221006",
+    "offset": 0
   },
-  // Retrieved metrics
+  // Aggregated results for the period
   "total": {
-    "additions": 0,
-    "approved": 0,
-    "changedFiles": 0,
-    "changesRequested": 0,
-    "closed": 3,
-    "comments": 2,
-    "deletions": 0,
-    "merged": 0,
-    "opened": 1,
-    "pickupTime": "00:00:20:00",
-    "pushed": 5,
-    "reviewTime": "00:01:01:31"
+    "additions": 74,
+    "approved": 136,
+    "changedFiles": 187,
+    "changesRequested": 158,
+    "closed": 146,
+    "comments": 100,
+    "deletions": 76,
+    "merged": 105,
+    "opened": 27,
+    "pickupTime": "01:04:57:46",
+    "pushed": 55,
+    "reviewTime": "00:16:05:56"
   },
   "average": {
-    "additions": 0,
-    "approved": 0,
-    "changedFiles": 0,
-    "changesRequested": 0,
-    "closed": 2,
-    "comments": 1,
-    "deletions": 0,
-    "merged": 0,
-    "opened": 1,
-    "pickupTime": "00:00:10:00",
-    "pushed": 3,
-    "reviewTime": "00:00:30:46"
+    "additions": 37,
+    "approved": 68,
+    "changedFiles": 94,
+    "changesRequested": 79,
+    "closed": 73,
+    "comments": 50,
+    "deletions": 38,
+    "merged": 53,
+    "opened": 14,
+    "pickupTime": "00:14:28:53",
+    "pushed": 28,
+    "reviewTime": "00:08:02:58"
   },
+  // For each day...
   "daily": {
-    // For all days...
-    "20221228": {
-      "additions": 0,
-      "approved": 0,
-      "changedFiles": 0,
-      "changesRequested": 0,
-      "closed": 2,
-      "comments": 2,
-      "deletions": 0,
-      "merged": 0,
-      "opened": 1,
-      "pickupTime": "00:00:00:00",
+    "20221005": {
+      "additions": 35,
+      "approved": 65,
+      "changedFiles": 97,
+      "changesRequested": 73,
+      "closed": 86,
+      "comments": 61,
+      "deletions": 12,
+      "merged": 66,
+      "opened": 18,
+      "pickupTime": "00:22:30:38",
       "pushed": 3,
-      "reviewTime": "00:00:00:00"
+      "reviewTime": "00:03:30:59"
     },
-    "20221229": {
-      "additions": 0,
-      "approved": 0,
-      "changedFiles": 0,
-      "changesRequested": 0,
-      "closed": 1,
-      "comments": 0,
-      "deletions": 0,
-      "merged": 0,
-      "opened": 0,
-      "pickupTime": "00:00:20:00",
-      "pushed": 2,
-      "reviewTime": "00:01:01:31"
+    "20221006": {
+      "additions": 39,
+      "approved": 71,
+      "changedFiles": 90,
+      "changesRequested": 85,
+      "closed": 60,
+      "comments": 39,
+      "deletions": 64,
+      "merged": 39,
+      "opened": 9,
+      "pickupTime": "00:06:27:08",
+      "pushed": 52,
+      "reviewTime": "00:12:34:57"
     }
   }
 }
@@ -317,29 +345,25 @@ This is a totally normal and acceptable way of passing the value. However, the v
 
 ### Metrics and history
 
-The granularity of metrics collection is on the daily level, in the format `YYYYMMDD` (e.g. `20221020`). While you can get a range of dates, you can't get more exact responses than a full day.
-
 **The most recent date you can get metrics for is the day prior, i.e. "yesterday"**. The reason for this is partly because it makes no real sense to get incomplete datasets, as well as because Gitmetrix caches all data requests. Caching a dataset with incomplete data would not be very good.
 
 ### Time
 
 #### Time zone used
 
-Gitmetrix uses UTC/GMT/Zulu time.
+Gitmetrix uses UTC/GMT+0/Zulu time.
 
 #### How timestamps are set
 
-Timestamps are set internally in Gitmetrix and generated based on the UTC/GMT/Zulu time.
+Timestamps are set internally in Gitmetrix and generated based on the UTC/GMT+0/Zulu time.
 
-**This should be fine for most circumstances but will possibly be inaccurate if you have teams that are very widely distributed**, in which case certain events may be posted to the wrong date.
-
-_I am planning to add similar support for offsets and querying as is used in [Dorametrix](https://github.com/mikaelvesavuori/dorametrix)_.
+To cater for more precise queries, you can use the `offset` parameter with values between `-12` and `12` (default is `0`) to adjust for a particular time zone.
 
 ### Database design
 
-| Primary Key          | Secondary Key | Attribute names |
-| -------------------- | ------------- | --------------- |
-| `METRICS_{ORG/REPO}` | `{YYYYMMDD}`  | See below       |
+| Primary Key          | Secondary Key      | Attribute names |
+| -------------------- | ------------------ | --------------- |
+| `METRICS_{ORG/REPO}` | `{Unix timestamp}` | See below       |
 
 Attribute names are shortened and may look a bit mysterious, but it's really just about optimizing them to the smallest values so that they don't eat unnecessary bandwidth, especially if you are fetching longer periods.
 
@@ -512,9 +536,7 @@ _Consider making a pull request, starting an Issue, or otherwise informing of yo
 
 ## Ideas for improvements
 
-- "Direct parser", for straight API calls rather than using webhooks?
-- Replace dates (`20221030`) with some type of normalized Unix timestamp such as used by Dorametrix
-- Get a dynamic response ("sliding window"): `{BASE_URL}/GetMetrics?repo=myservice&last=7`
+- "Direct parser", for direct API calls rather than using webhooks?
 - "Coding time metric", measuring the time between an initial commit and when a PR is ready to review?
 - Integration and system tests?
 

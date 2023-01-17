@@ -19,6 +19,7 @@ export type EventInput = {
  */
 export type Headers = {
   'User-Agent': string;
+  Authorization?: string;
 };
 
 /**
@@ -30,6 +31,5 @@ export type HttpMethod = 'GET' | 'POST' | 'OPTIONS';
  * @description Simplified query string parameters object.
  */
 export type QueryStringParameters = {
-  [key: string]: string;
   authorization: string;
 };

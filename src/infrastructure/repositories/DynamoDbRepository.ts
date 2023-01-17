@@ -5,22 +5,25 @@ import {
   PutItemCommand
 } from '@aws-sdk/client-dynamodb';
 
-import { Repository } from '../../interfaces/Repository';
+import { CacheRequest, DataRequest, Repository } from '../../interfaces/Repository';
 import {
   ParsedPickupTime,
   ParsedResult,
+  ParsedResultBasic,
   ParsedReviewSize,
   ParsedReviewTime
 } from '../../interfaces/Parser';
-import { MetricInput } from '../../interfaces/MetricInput';
-import { DynamoItem, DynamoItems } from '../../interfaces/DynamoDb';
+import { DynamoItems } from '../../interfaces/DynamoDb';
 import { CleanedItem } from '../../interfaces/Item';
+import { MetricsResult } from '../../interfaces/Metrics';
 
 import { getCleanedItems } from '../frameworks/getCleanedItems';
-import { getDateBefore } from '../frameworks/date';
 import { addCustomMetric } from '../frameworks/addCustomMetric';
 
-import { MissingEnvironmentVariablesDynamoError } from '../../application/errors';
+import { MissingEnvironmentVariablesDynamoError } from '../../application/errors/errors';
+
+import { getCachedTestData } from '../../../testdata/database/DynamoTestDatabase';
+import { getTestData } from '../../../testdata/database/DynamoTestDatabase';
 
 /**
  * @description Factory function to create a DynamoDB repository.
@@ -55,35 +58,64 @@ export class DynamoDbRepository implements Repository {
   /**
    * @description Get metrics for a given repository and a period of time.
    *
-   * If a `toDate` is not supplied, we will default to yesterday's date.
+   * If a `to` is not supplied, we will default to yesterday's date.
    *
    * We are caching the item prior to the "cleaning" and transformation so that the cache item
    * is as small as possible in storage.
    */
-  public async getMetrics(
-    repoName: string,
-    fromDate: string,
-    toDate?: string
-  ): Promise<CleanedItem[]> {
-    if (!toDate) toDate = getDateBefore(true);
+  public async getMetrics(dataRequest: DataRequest): Promise<CleanedItem[]> {
+    const cachedData = await this.getItem(dataRequest);
 
-    const key = `METRICS_CACHED_${repoName}`;
-    const range = `${fromDate}_${toDate}`;
-
-    // Check cache
-    const cachedData = await this.getCachedData(key, range);
-    if (cachedData.length > 0) {
-      addCustomMetric('cached');
-      return getCleanedItems(cachedData);
-    }
-
-    // Get fresh data and cache it
     addCustomMetric('uncached');
-    const data = await this.getItem(repoName, fromDate, toDate);
-    const items = data?.Items || '';
-    if (items && items.length > 0) await this.cacheItem(key, range, items);
+    return getCleanedItems(cachedData?.Items || []);
+  }
 
-    return getCleanedItems(items);
+  /**
+   * @description Get metrics from cache.
+   */
+  public async getCachedMetrics(dataRequest: DataRequest): Promise<MetricsResult> {
+    const { key, from, to } = dataRequest;
+
+    const command = {
+      TableName: this.tableName,
+      KeyConditionExpression: 'pk = :pk AND sk = :sk',
+      ExpressionAttributeValues: {
+        ':pk': { S: `CACHED_${key}` },
+        ':sk': { S: `${from}_${to}` }
+      },
+      Limit: 1
+    };
+
+    // @ts-ignore
+    const data: DynamoItems | null =
+      process.env.NODE_ENV !== 'test'
+        ? await this.dynamoDb.send(new QueryCommand(command))
+        : getCachedTestData(key, from, to);
+
+    addCustomMetric('cached');
+
+    if (data?.Items && data.Items.length > 0) return JSON.parse(data.Items[0].data['S']);
+
+    return {} as any;
+  }
+
+  /**
+   * @description Caches metrics with PutItem command.
+   */
+  public async cacheMetrics(cacheRequest: CacheRequest): Promise<void> {
+    const { key, range, metrics } = cacheRequest;
+
+    const command = {
+      TableName: this.tableName,
+      Item: {
+        pk: { S: `CACHED_${key}` },
+        sk: { S: range },
+        data: { S: JSON.stringify(metrics) }
+      }
+    };
+
+    /* istanbul ignore next */
+    if (process.env.NODE_ENV !== 'test') await this.dynamoDb.send(new PutItemCommand(command));
   }
 
   //////////
@@ -93,10 +125,10 @@ export class DynamoDbRepository implements Repository {
   /**
    * @description Add a "pushed" metric.
    */
-  public async addPushed(input: MetricInput) {
-    const { repoName, date } = input;
+  public async addPushed(input: ParsedResultBasic) {
+    const { repo, timestamp } = input;
 
-    const params = {
+    const command = {
       ExpressionAttributeValues: {
         ':p': { N: '1' },
         ':start_value': { N: '0' }
@@ -104,7 +136,7 @@ export class DynamoDbRepository implements Repository {
       UpdateExpression: 'SET p = if_not_exists(p, :start_value) + :p'
     };
 
-    await this.updateItem(repoName, date, params);
+    await this.updateItem(repo, timestamp, command);
   }
 
   ///////////////////
@@ -114,10 +146,10 @@ export class DynamoDbRepository implements Repository {
   /**
    * @description Add an "opened" metric.
    */
-  public async addOpenedPr(input: MetricInput) {
-    const { repoName, date } = input;
+  public async addOpenedPr(input: ParsedResultBasic) {
+    const { repo, timestamp } = input;
 
-    const params = {
+    const command = {
       ExpressionAttributeValues: {
         ':o': { N: '1' },
         ':start_value': { N: '0' }
@@ -125,16 +157,16 @@ export class DynamoDbRepository implements Repository {
       UpdateExpression: 'SET o = if_not_exists(o, :start_value) + :o'
     };
 
-    await this.updateItem(repoName, date, params);
+    await this.updateItem(repo, timestamp, command);
   }
 
   /**
    * @description Add a "merged" metric.
    */
-  public async addMergedPr(input: MetricInput) {
-    const { repoName, date } = input;
+  public async addMergedPr(input: ParsedResultBasic) {
+    const { repo, timestamp } = input;
 
-    const params = {
+    const command = {
       ExpressionAttributeValues: {
         ':m': { N: '1' },
         ':start_value': { N: '0' }
@@ -142,16 +174,16 @@ export class DynamoDbRepository implements Repository {
       UpdateExpression: 'SET m = if_not_exists(m, :start_value) + :m'
     };
 
-    await this.updateItem(repoName, date, params);
+    await this.updateItem(repo, timestamp, command);
   }
 
   /**
    * @description Add a "closed" metric.
    */
-  public async addClosedPr(input: MetricInput) {
-    const { repoName, date } = input;
+  public async addClosedPr(input: ParsedResultBasic) {
+    const { repo, timestamp } = input;
 
-    const params = {
+    const command = {
       ExpressionAttributeValues: {
         ':cl': { N: '1' },
         ':start_value': { N: '0' }
@@ -159,7 +191,7 @@ export class DynamoDbRepository implements Repository {
       UpdateExpression: 'SET cl = if_not_exists(cl, :start_value) + :cl'
     };
 
-    await this.updateItem(repoName, date, params);
+    await this.updateItem(repo, timestamp, command);
   }
 
   ////////////
@@ -169,10 +201,10 @@ export class DynamoDbRepository implements Repository {
   /**
    * @description Add a "comment" metric.
    */
-  public async addComment(input: MetricInput) {
-    const { repoName, date } = input;
+  public async addComment(input: ParsedResultBasic) {
+    const { repo, timestamp } = input;
 
-    const params = {
+    const command = {
       ExpressionAttributeValues: {
         ':cm': { N: '1' },
         ':start_value': { N: '0' }
@@ -180,16 +212,16 @@ export class DynamoDbRepository implements Repository {
       UpdateExpression: 'SET cm = if_not_exists(cm, :start_value) + :cm'
     };
 
-    await this.updateItem(repoName, date, params);
+    await this.updateItem(repo, timestamp, command);
   }
 
   /**
    * @description Add an "approval" metric.
    */
-  public async addApproval(input: MetricInput) {
-    const { repoName, date } = input;
+  public async addApproval(input: ParsedResultBasic) {
+    const { repo, timestamp } = input;
 
-    const params = {
+    const command = {
       ExpressionAttributeValues: {
         ':ap': { N: '1' },
         ':start_value': { N: '0' }
@@ -197,16 +229,16 @@ export class DynamoDbRepository implements Repository {
       UpdateExpression: 'SET ap = if_not_exists(ap, :start_value) + :ap'
     };
 
-    await this.updateItem(repoName, date, params);
+    await this.updateItem(repo, timestamp, command);
   }
 
   /**
    * @description Add a "changes requested" metric.
    */
-  public async addChangesRequested(input: MetricInput) {
-    const { repoName, date } = input;
+  public async addChangesRequested(input: ParsedResultBasic) {
+    const { repo, timestamp } = input;
 
-    const params = {
+    const command = {
       ExpressionAttributeValues: {
         ':chr': { N: '1' },
         ':start_value': { N: '0' }
@@ -214,7 +246,7 @@ export class DynamoDbRepository implements Repository {
       UpdateExpression: 'SET chr = if_not_exists(chr, :start_value) + :chr'
     };
 
-    await this.updateItem(repoName, date, params);
+    await this.updateItem(repo, timestamp, command);
   }
 
   ////////////////////
@@ -225,10 +257,10 @@ export class DynamoDbRepository implements Repository {
    * @description Add all metrics for a review size update.
    */
   public async addReviewSize(result: ParsedResult) {
-    const { repoName, date } = result;
+    const { repo, timestamp } = result;
     const { additions, changedFiles, deletions } = result.change as ParsedReviewSize;
 
-    const params = {
+    const command = {
       ExpressionAttributeValues: {
         ':ad': { N: `${additions}` },
         ':chf': { N: `${changedFiles}` },
@@ -239,17 +271,17 @@ export class DynamoDbRepository implements Repository {
         'SET ad = if_not_exists(ad, :start_value) + :ad, chf = if_not_exists(chf, :start_value) + :chf, d = if_not_exists(d, :start_value) + :d'
     };
 
-    await this.updateItem(repoName, date, params);
+    await this.updateItem(repo, timestamp, command);
   }
 
   /**
    * @description Add pick-up time to aggregate.
    */
   public async addPickupTime(result: ParsedResult) {
-    const { repoName, date } = result;
+    const { repo, timestamp } = result;
     const time = result.change as ParsedPickupTime;
 
-    const params = {
+    const command = {
       ExpressionAttributeValues: {
         ':pt': { N: `${time}` },
         ':start_value': { N: '0' }
@@ -257,17 +289,17 @@ export class DynamoDbRepository implements Repository {
       UpdateExpression: 'SET pt = if_not_exists(pt, :start_value) + :pt'
     };
 
-    await this.updateItem(repoName, date, params);
+    await this.updateItem(repo, timestamp, command);
   }
 
   /**
    * @description Add review time to aggregate.
    */
   public async addReviewTime(result: ParsedResult) {
-    const { repoName, date } = result;
+    const { repo, timestamp } = result;
     const time = result.change as ParsedReviewTime;
 
-    const params = {
+    const command = {
       ExpressionAttributeValues: {
         ':rt': { N: `${time}` },
         ':start_value': { N: '0' }
@@ -275,7 +307,7 @@ export class DynamoDbRepository implements Repository {
       UpdateExpression: 'SET rt = if_not_exists(rt, :start_value) + :rt'
     };
 
-    await this.updateItem(repoName, date, params);
+    await this.updateItem(repo, timestamp, command);
   }
 
   /////////////////////
@@ -285,122 +317,42 @@ export class DynamoDbRepository implements Repository {
   /**
    * @description Get data from DynamoDB.
    */
-  private async getItem(repoName: string, fromDate: string, toDate: string): Promise<DynamoItems> {
-    const params = {
+  private async getItem(dataRequest: DataRequest): Promise<any> {
+    const { key, from, to } = dataRequest;
+
+    const command = {
       TableName: this.tableName,
-      KeyConditionExpression: 'pk = :pk AND sk BETWEEN :from AND :to',
+      KeyConditionExpression: 'pk = :pk AND sk BETWEEN :sk AND :to',
       ExpressionAttributeValues: {
-        ':pk': { S: `METRICS_${repoName}` },
-        ':from': { S: fromDate },
-        ':to': { S: toDate }
+        ':pk': { S: `METRICS_${key}` },
+        ':sk': { S: from },
+        ':to': { S: to }
       }
     };
 
-    // @ts-ignore
     return process.env.NODE_ENV !== 'test'
-      ? await this.dynamoDb.send(new QueryCommand(params))
-      : { Items: testDataItem };
+      ? await this.dynamoDb.send(new QueryCommand(command))
+      : getTestData(key);
   }
 
   /**
    * @description Updates an item in the DynamoDB table.
    */
   private async updateItem(
-    repoName: string,
-    date: string,
+    repo: string,
+    timestamp: string,
     parameters: Record<string, any>
   ): Promise<void> {
-    const params = {
+    const command = {
       ...parameters,
       Key: {
-        pk: { S: `METRICS_${repoName}` },
-        sk: { S: date }
+        pk: { S: `METRICS_${repo}` },
+        sk: { S: timestamp }
       },
       TableName: this.tableName
     };
 
     /* istanbul ignore next */
-    if (process.env.NODE_ENV !== 'test') await this.dynamoDb.send(new UpdateItemCommand(params));
-  }
-
-  /**
-   * @description Caches item with PutItem.
-   */
-  private async cacheItem(key: string, range: string, data: DynamoItem[]): Promise<void> {
-    const params = {
-      Item: {
-        pk: { S: key },
-        sk: { S: range },
-        data: { S: JSON.stringify(data) }
-      },
-      TableName: this.tableName
-    };
-
-    /* istanbul ignore next */
-    if (process.env.NODE_ENV !== 'test') await this.dynamoDb.send(new PutItemCommand(params));
-  }
-
-  /**
-   * @description Get cached data.
-   */
-  private async getCachedData(key: string, range: string): Promise<DynamoItem[]> {
-    const params = {
-      TableName: this.tableName,
-      KeyConditionExpression: 'pk = :pk AND sk = :sk',
-      ExpressionAttributeValues: {
-        ':pk': { S: key },
-        ':sk': { S: range }
-      },
-      Limit: 1
-    };
-
-    const useCachedTestData = process.env.USE_CACHED_TEST_DATA === 'true';
-
-    // @ts-ignore
-    const cachedData: DynamoItems | null = useCachedTestData
-      ? cachedTestData
-      : process.env.NODE_ENV !== 'test'
-        ? await this.dynamoDb.send(new QueryCommand(params))
-        : null;
-
-    if (cachedData?.Items && cachedData.Items.length > 0)
-      return JSON.parse(cachedData.Items[0].data['S']);
-
-    return [];
+    if (process.env.NODE_ENV !== 'test') await this.dynamoDb.send(new UpdateItemCommand(command));
   }
 }
-
-/**
- * @description Dummy data for testing purposes.
- */
-const testDataItem = [
-  {
-    chf: { N: '67' },
-    rt: { N: '5313' },
-    d: { N: '50' },
-    ad: { N: '67' },
-    pt: { N: '1413' },
-    cl: { N: '33' },
-    cm: { N: '40' },
-    m: { N: '29' },
-    chr: { N: '60' },
-    o: { N: '58' },
-    p: { N: '23' },
-    ap: { N: '22' },
-    sk: { S: '20221115' },
-    pk: { S: 'METRICS_SOMEORG/SOMEREPO' }
-  }
-];
-
-/**
- * @description DynamoDB mock response
- */
-const cachedTestData = {
-  Items: [
-    {
-      data: {
-        S: JSON.stringify(testDataItem)
-      }
-    }
-  ]
-};

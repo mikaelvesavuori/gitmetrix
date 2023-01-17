@@ -3,9 +3,9 @@ import { MikroMetric } from 'mikrometric';
 
 import { EventInput } from '../../../interfaces/Aws';
 
-import { getMetricsUsecase } from '../../../usecases/getMetrics';
+import { getMetrics } from '../../../usecases/getMetrics';
 
-import { getDTO } from '../../frameworks/getDTO';
+import { getRequestDTO } from '../../../application/getRequestDTO';
 import { getRepo } from '../../frameworks/getRepo';
 import { end } from '../../frameworks/end';
 
@@ -24,9 +24,9 @@ export async function handler(event: EventInput, context: Record<string, any>) {
   });
 
   try {
-    const { repoName, fromDate, toDate } = getDTO(event);
+    const input = getRequestDTO(event.queryStringParameters || {});
     const repository = getRepo(process.env.NODE_ENV === 'test');
-    const metrics = await getMetricsUsecase({ repository, repoName, fromDate, toDate });
+    const metrics = await getMetrics(repository, input);
     return end(200, metrics);
   } catch (error: any) {
     const message: string = error.message;

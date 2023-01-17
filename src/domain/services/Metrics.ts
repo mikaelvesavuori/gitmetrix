@@ -1,3 +1,5 @@
+import { prettifyTime, prettyTimeToSeconds, getDateFromTimestamp } from 'chrono-utils';
+
 import {
   DailyMetricSet,
   MakeMetricsInput,
@@ -5,7 +7,6 @@ import {
   MetricsResult
 } from '../../interfaces/Metrics';
 
-import { prettifyTime, prettyTimeToSeconds } from '../../infrastructure/frameworks/time';
 import { CleanedItem } from '../../interfaces/Item';
 
 /**
@@ -16,24 +17,25 @@ export function createNewMetrics() {
 }
 
 /**
- * @description Domain service for vending properly shaped `MetricsResult`s.
+ * @description Domain service for vending properly shaped `Metrics`.
  */
 class Metrics {
   /**
-   * @description Create a valid `MetricsResult` DTO.
+   * @description Create a valid `Metrics` DTO.
    */
   public makeMetrics(input: MakeMetricsInput): MetricsResult {
-    const { items, repoName, fromDate, toDate } = input;
+    const { items, repo, from, to, offset } = input;
 
     const total = this.createTotalMetrics(items);
     const average = this.calculateAverages(total, items.length);
     const daily = this.createDailyMetrics(items);
 
     return {
-      repo: repoName,
+      repo,
       period: {
-        from: fromDate,
-        to: toDate
+        from: getDateFromTimestamp(from),
+        to: getDateFromTimestamp(to),
+        offset
       },
       total,
       average,
@@ -48,7 +50,7 @@ class Metrics {
     const daily: DailyMetricSet = {};
 
     items.forEach((item: CleanedItem) => {
-      const innerObject: any = Object.values(item)[0];
+      const innerObject: Record<string, any> = Object.values(item)[0];
       const dailyItem = {
         additions: this.getValue(innerObject, 'additions'),
         approved: this.getValue(innerObject, 'approved'),
@@ -65,8 +67,9 @@ class Metrics {
       };
 
       const timestamp = Object.keys(item)[0];
+
       // @ts-ignore
-      daily[timestamp] = dailyItem;
+      daily[getDateFromTimestamp(timestamp)] = dailyItem;
     });
 
     return daily;
@@ -131,7 +134,7 @@ class Metrics {
    * @description Get the average value (by dividing a value with a number).
    */
   private getAverageValue(value: number, count: number) {
-    return Math.round(value / count);
+    return value === 0 ? 0 : Math.round(value / count);
   }
 
   /**
@@ -160,8 +163,8 @@ class Metrics {
    * Also coerces any input into numbers as databases such as DynamoDB will store items as strings.
    */
   private reduceToNumber(items: Record<string, any>[], key: string): number {
-    return items.reduce((previousValue: number, currentValue: Record<string, any>) => {
-      const value: string = currentValue[Object.keys(currentValue)[0]][key];
+    return items.reduce((previousValue: number, currentItem: Record<string, any>) => {
+      const value: string = currentItem[Object.keys(currentItem)[0]][key];
       if (value) return previousValue + parseInt(value);
       return parseInt(previousValue as unknown as string);
     }, 0);
@@ -173,8 +176,8 @@ class Metrics {
    */
   private reduceTime(items: Record<string, any>[], key: string): string {
     const value =
-      items.reduce((previousValue: number, currentValue: Record<string, any>) => {
-        const value = prettyTimeToSeconds(currentValue[Object.keys(currentValue)[0]][key]);
+      items.reduce((previousValue: number, currentItem: Record<string, any>) => {
+        const value = prettyTimeToSeconds(currentItem[Object.keys(currentItem)[0]][key]);
         if (value) return previousValue + value;
         return previousValue;
       }, 0) || 0;

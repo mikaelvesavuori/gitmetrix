@@ -1,8 +1,7 @@
 import test from 'ava';
+import { getCurrentDate, getTimestampForInputDate } from 'chrono-utils';
 
 import { getParser } from '../../../src/application/getParser';
-
-import { getCurrentDate } from '../../../src/infrastructure/frameworks/date';
 
 import issueCommentCreated from '../../../testdata/webhooks/issue_comment-created.json';
 import prApproved from '../../../testdata/webhooks/pull_request_review-submitted-approved.json';
@@ -16,13 +15,13 @@ import readyForReview from '../../../testdata/webhooks/pull_request-ready_for_re
 const parser = getParser({
   'User-Agent': 'GitHub'
 });
-const currentDate = getCurrentDate(true);
+const currentTime = getTimestampForInputDate(getCurrentDate(true));
 
 test.serial('It should parse a push event', (t) => {
   const expected: any = [
     {
-      date: currentDate,
-      repoName: 'SOMEORG/SOMEREPO',
+      timestamp: currentTime,
+      repo: 'SOMEORG/SOMEREPO',
       type: 'Pushed'
     }
   ];
@@ -35,13 +34,13 @@ test.serial('It should parse a push event', (t) => {
 test.serial('It should parse a "ready for review" event', (t) => {
   const expected: any = [
     {
-      date: currentDate,
+      timestamp: currentTime,
       change: {
         additions: 1,
         changedFiles: 1,
         deletions: 0
       },
-      repoName: 'SOMEORG/SOMEREPO',
+      repo: 'SOMEORG/SOMEREPO',
       type: 'ReviewSize'
     }
   ];
@@ -54,8 +53,8 @@ test.serial('It should parse a "ready for review" event', (t) => {
 test.serial('It should parse a "PR opened" event', (t) => {
   const expected: any = [
     {
-      date: getCurrentDate(true),
-      repoName: 'SOMEORG/SOMEREPO',
+      timestamp: currentTime,
+      repo: 'SOMEORG/SOMEREPO',
       type: 'Opened'
     }
   ];
@@ -68,8 +67,8 @@ test.serial('It should parse a "PR opened" event', (t) => {
 test.serial('It should parse a "PR closed" event', (t) => {
   const expected: any = [
     {
-      date: currentDate,
-      repoName: 'SOMEORG/SOMEREPO',
+      timestamp: currentTime,
+      repo: 'SOMEORG/SOMEREPO',
       type: 'Closed'
     }
   ];
@@ -82,19 +81,19 @@ test.serial('It should parse a "PR closed" event', (t) => {
 test.serial('It should parse a "PR merged" event', (t) => {
   const expected: any = [
     {
-      date: currentDate,
-      repoName: 'SOMEORG/SOMEREPO',
+      timestamp: currentTime,
+      repo: 'SOMEORG/SOMEREPO',
       type: 'Merged'
     },
     {
-      date: currentDate,
-      repoName: 'SOMEORG/SOMEREPO',
+      timestamp: currentTime,
+      repo: 'SOMEORG/SOMEREPO',
       type: 'Closed'
     },
     {
-      date: currentDate,
+      timestamp: currentTime,
       change: 7,
-      repoName: 'SOMEORG/SOMEREPO',
+      repo: 'SOMEORG/SOMEREPO',
       type: 'ReviewTime'
     }
   ];
@@ -107,8 +106,8 @@ test.serial('It should parse a "PR merged" event', (t) => {
 test.serial('It should parse a "issue comment merged" event', (t) => {
   const expected: any = [
     {
-      date: getCurrentDate(true),
-      repoName: 'SOMEORG/SOMEREPO',
+      timestamp: currentTime,
+      repo: 'SOMEORG/SOMEREPO',
       type: 'Commented'
     }
   ];
@@ -121,14 +120,14 @@ test.serial('It should parse a "issue comment merged" event', (t) => {
 test.serial('It should parse a "approved" event', (t) => {
   const expected: any = [
     {
-      date: getCurrentDate(true),
-      repoName: 'SOMEORG/SOMEREPO',
+      timestamp: currentTime,
+      repo: 'SOMEORG/SOMEREPO',
       type: 'Approved'
     },
     {
       change: 145,
-      date: getCurrentDate(true),
-      repoName: 'SOMEORG/SOMEREPO',
+      timestamp: currentTime,
+      repo: 'SOMEORG/SOMEREPO',
       type: 'PickupTime'
     }
   ];
@@ -141,14 +140,14 @@ test.serial('It should parse a "approved" event', (t) => {
 test.serial('It should parse a "changes requested" event', (t) => {
   const expected: any = [
     {
-      date: getCurrentDate(true),
-      repoName: 'SOMEORG/SOMEREPO',
+      timestamp: currentTime,
+      repo: 'SOMEORG/SOMEREPO',
       type: 'ChangesRequested'
     },
     {
       change: 105,
-      date: getCurrentDate(true),
-      repoName: 'SOMEORG/SOMEREPO',
+      timestamp: currentTime,
+      repo: 'SOMEORG/SOMEREPO',
       type: 'PickupTime'
     }
   ];

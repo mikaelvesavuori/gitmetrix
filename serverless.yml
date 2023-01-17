@@ -53,7 +53,12 @@ functions:
     events:
       - http:
           method: GET
-          path: /GetMetrics
+          path: /metrics
+          authorizer:
+            name: Authorizer
+            resultTtlInSeconds: ${self:custom.aws.apiGatewayCachingTtlValue}
+            identitySource: method.request.header.Authorization
+            type: request
     iamRoleStatements:
       - Effect: 'Allow'
         Action:
@@ -69,11 +74,11 @@ functions:
     events:
       - http:
           method: POST
-          path: /AddMetrics
+          path: /metrics
           authorizer:
             name: Authorizer
             resultTtlInSeconds: ${self:custom.aws.apiGatewayCachingTtlValue}
-            identitySource: method.request.querystring.authorization, method.request.header.X-GitHub-Event
+            identitySource: method.request.querystring.authorization
             type: request
     iamRoleStatements:
       - Effect: 'Allow'
