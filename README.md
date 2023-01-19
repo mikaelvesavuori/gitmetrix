@@ -539,6 +539,7 @@ _Consider making a pull request, starting an Issue, or otherwise informing of yo
 - "Direct parser", for direct API calls rather than using webhooks?
 - "Coding time metric", measuring the time between an initial commit and when a PR is ready to review?
 - Integration and system tests?
+- Cache with offset - currently caches on date range/timestamp range, but the query will be incorrect if using other (subsequent) offset
 
 ---
 
