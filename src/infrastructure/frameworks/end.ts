@@ -6,6 +6,10 @@ export function end(statusCode = 201, message?: Record<string, any> | number | s
 
   return {
     statusCode,
-    body: JSON.stringify(message)
+    body: JSON.stringify(message),
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true
+    }
   };
 }

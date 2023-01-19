@@ -42,9 +42,14 @@ custom:
     apiGatewayCachingTtlValue: ${self:custom.aws.apiGatewayCachingTtl.${self:provider.stage}, self:custom.aws.apiGatewayCachingTtl.test} # See: https://forum.serverless.com/t/api-gateway-custom-authorizer-caching-problems/4695
 
 functions:
-  Authorizer:
+  AuthorizerGet:
     handler: src/infrastructure/authorizers/Authorizer.handler
-    description: ${self:service} authorizer
+    description: ${self:service} authorizer for getting metrics
+    environment:
+      AUTH_TOKEN: ${self:custom.config.authToken}
+  AuthorizerAdd:
+    handler: src/infrastructure/authorizers/Authorizer.handler
+    description: ${self:service} authorizer for adding metrics
     environment:
       AUTH_TOKEN: ${self:custom.config.authToken}
   GetMetrics:
@@ -55,10 +60,20 @@ functions:
           method: GET
           path: /metrics
           authorizer:
-            name: Authorizer
+            name: AuthorizerGet
             resultTtlInSeconds: ${self:custom.aws.apiGatewayCachingTtlValue}
             identitySource: method.request.header.Authorization
             type: request
+          cors:
+            origin: '*'
+            methods:
+              - GET
+            headers:
+              - Content-Type
+              - Authorization
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Credentials
+              - Vary
     iamRoleStatements:
       - Effect: 'Allow'
         Action:
@@ -76,10 +91,20 @@ functions:
           method: POST
           path: /metrics
           authorizer:
-            name: Authorizer
+            name: AuthorizerAdd
             resultTtlInSeconds: ${self:custom.aws.apiGatewayCachingTtlValue}
             identitySource: method.request.querystring.authorization
             type: request
+          cors:
+            origin: '*'
+            methods:
+              - POST
+            headers:
+              - Content-Type
+              - Authorization
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Credentials
+              - Vary
     iamRoleStatements:
       - Effect: 'Allow'
         Action:
