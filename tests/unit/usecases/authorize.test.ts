@@ -48,10 +48,7 @@ test.serial('It should return a CORS response for an OPTIONS call', async (t) =>
     body: '"OK"',
     headers: {
       'Access-Control-Allow-Credentials': true,
-      'Access-Control-Allow-Headers': 'Content-Type',
-      'Access-Control-Allow-Methods': 'OPTIONS,POST,GET',
-      'Access-Control-Allow-Origin': '*',
-      Vary: 'Origin'
+      'Access-Control-Allow-Origin': '*'
     },
     statusCode: 200
   };

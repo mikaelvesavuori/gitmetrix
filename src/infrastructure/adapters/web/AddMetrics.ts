@@ -31,10 +31,10 @@ export async function handler(event: EventInput, context: Record<string, any>) {
       event.body && typeof event.body === 'string' ? JSON.parse(event.body) : event.body;
     const headers: Record<string, any> = event.headers;
 
-    const inputDto: MetricInputDto = {
+    const inputDto: MetricInputDto = Object.freeze({
       headers,
       body
-    };
+    });
 
     await addMetric(inputDto);
 
