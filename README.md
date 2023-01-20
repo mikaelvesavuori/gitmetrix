@@ -139,7 +139,7 @@ The below commands are the most critical ones. See `package.json` for more comma
 #### Required
 
 - `custom.config.accountNumber`: Your AWS account number.
-- `custom.config.authToken`: The "API key" or authorization token you want to use to secure your service. You will use this when getting data from the service.
+- `custom.config.authToken`: The "API key" or authorization token you want to use to secure your service.
 
 Note that all unit tests use a separate authorization token that you don't have to care about in regular use.
 
@@ -209,8 +209,6 @@ The approach used in Gitmetrix is instead to make the best of the situation and 
 All GET requests require that same token but in a more practical `Authorization` header.
 
 This approach adds a minimal security measure but is flexible enough to also work effortlessly with any integration tests you might want to run. At the end of the day an acceptable compromise solution, I hope.
-
-_Consider making a pull request, starting an Issue, or otherwise informing of your interest in this, if it's important to you or if you have ideas for resolving this in a good way._
 
 ## Using the service
 

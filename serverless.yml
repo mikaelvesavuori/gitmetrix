@@ -30,8 +30,9 @@ package:
 
 custom:
   config:
-    authToken: 'something' # Your choice, see for example https://www.uuidgenerator.net for getting a UUID v4
-    accountNumber: '876265053232'
+    authToken: something # Your choice, see for example https://www.uuidgenerator.net for getting a UUID v4
+    accountNumber: 123412341234
+    maxDateRange: 30
     tableName: gitmetrix
   aws:
     databaseArn: 'arn:aws:dynamodb:${self:provider.region}:${self:custom.config.accountNumber}:table/${self:custom.config.tableName}'
@@ -40,18 +41,43 @@ custom:
       dev: 0
       test: 0
     apiGatewayCachingTtlValue: ${self:custom.aws.apiGatewayCachingTtl.${self:provider.stage}, self:custom.aws.apiGatewayCachingTtl.test} # See: https://forum.serverless.com/t/api-gateway-custom-authorizer-caching-problems/4695
+  esbuild:
+    bundle: true
+    minify: true
 
 functions:
-  AuthorizerGet:
-    handler: src/infrastructure/authorizers/Authorizer.handler
-    description: ${self:service} authorizer for getting metrics
-    environment:
-      AUTH_TOKEN: ${self:custom.config.authToken}
   AuthorizerAdd:
-    handler: src/infrastructure/authorizers/Authorizer.handler
+    handler: src/infrastructure/adapters/web/Authorizer.handler
     description: ${self:service} authorizer for adding metrics
     environment:
       AUTH_TOKEN: ${self:custom.config.authToken}
+  AuthorizerGet:
+    handler: src/infrastructure/adapters/web/Authorizer.handler
+    description: ${self:service} authorizer for getting metrics
+    environment:
+      AUTH_TOKEN: ${self:custom.config.authToken}
+  AddMetrics:
+    handler: src/infrastructure/adapters/web/AddMetrics.handler
+    description: Add a metric into Gitmetrix
+    events:
+      - http:
+          method: POST
+          path: /metrics
+          authorizer:
+            name: AuthorizerAdd
+            resultTtlInSeconds: ${self:custom.aws.apiGatewayCachingTtlValue}
+            identitySource: method.request.querystring.authorization
+            type: request
+    iamRoleStatements:
+      - Effect: 'Allow'
+        Action:
+          - dynamodb:PutItem
+          - dynamodb:UpdateItem
+        Resource: ${self:custom.aws.databaseArn}
+    environment:
+      REGION: ${self:provider.region}
+      TABLE_NAME: ${self:custom.config.tableName}
+      MAX_DATE_RANGE: ${self:custom.config.maxDateRange}
   GetMetrics:
     handler: src/infrastructure/adapters/web/GetMetrics.handler
     description: Get metrics from Gitmetrix
@@ -73,7 +99,6 @@ functions:
               - Authorization
               - Access-Control-Allow-Origin
               - Access-Control-Allow-Credentials
-              - Vary
     iamRoleStatements:
       - Effect: 'Allow'
         Action:
@@ -83,37 +108,7 @@ functions:
     environment:
       REGION: ${self:provider.region}
       TABLE_NAME: ${self:custom.config.tableName}
-  AddMetrics:
-    handler: src/infrastructure/adapters/web/AddMetrics.handler
-    description: Add a metric into Gitmetrix
-    events:
-      - http:
-          method: POST
-          path: /metrics
-          authorizer:
-            name: AuthorizerAdd
-            resultTtlInSeconds: ${self:custom.aws.apiGatewayCachingTtlValue}
-            identitySource: method.request.querystring.authorization
-            type: request
-          cors:
-            origin: '*'
-            methods:
-              - POST
-            headers:
-              - Content-Type
-              - Authorization
-              - Access-Control-Allow-Origin
-              - Access-Control-Allow-Credentials
-              - Vary
-    iamRoleStatements:
-      - Effect: 'Allow'
-        Action:
-          - dynamodb:PutItem
-          - dynamodb:UpdateItem
-        Resource: ${self:custom.aws.databaseArn}
-    environment:
-      REGION: ${self:provider.region}
-      TABLE_NAME: ${self:custom.config.tableName}
+      MAX_DATE_RANGE: ${self:custom.config.maxDateRange}
 
 resources:
   Resources:

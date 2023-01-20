@@ -220,7 +220,7 @@
 <polygon fill="#757575" stroke="#757575" points="599.22,-302 609.22,-298.5 599.22,-295 599.22,-302"/>
 </g>
 <!-- infrastructure/frameworks/getRepo.ts -->
-<g id="node21" class="node">
+<g id="node23" class="node">
 <title>infrastructure/frameworks/getRepo.ts</title>
 <path fill="none" stroke="#c6c5fe" d="M838.33,-494C838.33,-494 614.67,-494 614.67,-494 610.83,-494 607,-490.17 607,-486.33 607,-486.33 607,-478.67 607,-478.67 607,-474.83 610.83,-471 614.67,-471 614.67,-471 838.33,-471 838.33,-471 842.17,-471 846,-474.83 846,-478.67 846,-478.67 846,-486.33 846,-486.33 846,-490.17 842.17,-494 838.33,-494"/>
 <text text-anchor="middle" x="726.5" y="-478.8" font-family="Arial" font-size="14.00" fill="#c6c5fe">infrastructure/frameworks/getRepo.ts</text>
@@ -243,38 +243,80 @@
 <path fill="none" stroke="#757575" d="M483.49,-286.66C504.37,-283.52 527.04,-280.25 548,-277.5 565.57,-275.19 584.14,-272.92 602.39,-270.78"/>
 <polygon fill="#757575" stroke="#757575" points="602.66,-274.27 612.19,-269.64 601.85,-267.32 602.66,-274.27"/>
 </g>
-<!-- infrastructure/adapters/web/GetMetrics.ts -->
+<!-- infrastructure/adapters/web/Authorizer.ts -->
 <g id="node20" class="node">
+<title>infrastructure/adapters/web/Authorizer.ts</title>
+<path fill="none" stroke="#c6c5fe" d="M254.83,-596C254.83,-596 11.17,-596 11.17,-596 7.33,-596 3.5,-592.17 3.5,-588.33 3.5,-588.33 3.5,-580.67 3.5,-580.67 3.5,-576.83 7.33,-573 11.17,-573 11.17,-573 254.83,-573 254.83,-573 258.67,-573 262.5,-576.83 262.5,-580.67 262.5,-580.67 262.5,-588.33 262.5,-588.33 262.5,-592.17 258.67,-596 254.83,-596"/>
+<text text-anchor="middle" x="133" y="-580.8" font-family="Arial" font-size="14.00" fill="#c6c5fe">infrastructure/adapters/web/Authorizer.ts</text>
+</g>
+<!-- usecases/authorize.ts -->
+<g id="node21" class="node">
+<title>usecases/authorize.ts</title>
+<path fill="none" stroke="#c6c5fe" d="M472.83,-596C472.83,-596 341.17,-596 341.17,-596 337.33,-596 333.5,-592.17 333.5,-588.33 333.5,-588.33 333.5,-580.67 333.5,-580.67 333.5,-576.83 337.33,-573 341.17,-573 341.17,-573 472.83,-573 472.83,-573 476.67,-573 480.5,-576.83 480.5,-580.67 480.5,-580.67 480.5,-588.33 480.5,-588.33 480.5,-592.17 476.67,-596 472.83,-596"/>
+<text text-anchor="middle" x="407" y="-580.8" font-family="Arial" font-size="14.00" fill="#c6c5fe">usecases/authorize.ts</text>
+</g>
+<!-- infrastructure/adapters/web/Authorizer.ts&#45;&gt;usecases/authorize.ts -->
+<g id="edge15" class="edge">
+<title>infrastructure/adapters/web/Authorizer.ts&#45;&gt;usecases/authorize.ts</title>
+<path fill="none" stroke="#757575" d="M262.83,-584.5C282.84,-584.5 303.07,-584.5 321.75,-584.5"/>
+<polygon fill="#757575" stroke="#757575" points="321.66,-588 331.66,-584.5 321.66,-581 321.66,-588"/>
+</g>
+<!-- infrastructure/frameworks/authorization/generatePolicy.ts -->
+<g id="node26" class="node">
+<title>infrastructure/frameworks/authorization/generatePolicy.ts</title>
+<path fill="none" stroke="#cfffac" d="M897.33,-617C897.33,-617 555.67,-617 555.67,-617 551.83,-617 548,-613.17 548,-609.33 548,-609.33 548,-601.67 548,-601.67 548,-597.83 551.83,-594 555.67,-594 555.67,-594 897.33,-594 897.33,-594 901.17,-594 905,-597.83 905,-601.67 905,-601.67 905,-609.33 905,-609.33 905,-613.17 901.17,-617 897.33,-617"/>
+<text text-anchor="middle" x="726.5" y="-601.8" font-family="Arial" font-size="14.00" fill="#cfffac">infrastructure/frameworks/authorization/generatePolicy.ts</text>
+</g>
+<!-- usecases/authorize.ts&#45;&gt;infrastructure/frameworks/authorization/generatePolicy.ts -->
+<g id="edge28" class="edge">
+<title>usecases/authorize.ts&#45;&gt;infrastructure/frameworks/authorization/generatePolicy.ts</title>
+<path fill="none" stroke="#757575" d="M480.84,-589.32C497.91,-590.45 516.87,-591.7 536.47,-593"/>
+<polygon fill="#757575" stroke="#757575" points="536.03,-596.48 546.24,-593.64 536.49,-589.49 536.03,-596.48"/>
+</g>
+<!-- infrastructure/frameworks/authorization/handleCors.ts -->
+<g id="node27" class="node">
+<title>infrastructure/frameworks/authorization/handleCors.ts</title>
+<path fill="none" stroke="#cfffac" d="M887.83,-576C887.83,-576 565.17,-576 565.17,-576 561.33,-576 557.5,-572.17 557.5,-568.33 557.5,-568.33 557.5,-560.67 557.5,-560.67 557.5,-556.83 561.33,-553 565.17,-553 565.17,-553 887.83,-553 887.83,-553 891.67,-553 895.5,-556.83 895.5,-560.67 895.5,-560.67 895.5,-568.33 895.5,-568.33 895.5,-572.17 891.67,-576 887.83,-576"/>
+<text text-anchor="middle" x="726.5" y="-560.8" font-family="Arial" font-size="14.00" fill="#cfffac">infrastructure/frameworks/authorization/handleCors.ts</text>
+</g>
+<!-- usecases/authorize.ts&#45;&gt;infrastructure/frameworks/authorization/handleCors.ts -->
+<g id="edge29" class="edge">
+<title>usecases/authorize.ts&#45;&gt;infrastructure/frameworks/authorization/handleCors.ts</title>
+<path fill="none" stroke="#757575" d="M480.84,-579.91C500.59,-578.67 522.87,-577.26 545.74,-575.82"/>
+<polygon fill="#757575" stroke="#757575" points="545.74,-579.33 555.5,-575.21 545.3,-572.34 545.74,-579.33"/>
+</g>
+<!-- infrastructure/adapters/web/GetMetrics.ts -->
+<g id="node22" class="node">
 <title>infrastructure/adapters/web/GetMetrics.ts</title>
 <path fill="none" stroke="#c6c5fe" d="M257.83,-474C257.83,-474 8.17,-474 8.17,-474 4.33,-474 0.5,-470.17 0.5,-466.33 0.5,-466.33 0.5,-458.67 0.5,-458.67 0.5,-454.83 4.33,-451 8.17,-451 8.17,-451 257.83,-451 257.83,-451 261.67,-451 265.5,-454.83 265.5,-458.67 265.5,-458.67 265.5,-466.33 265.5,-466.33 265.5,-470.17 261.67,-474 257.83,-474"/>
 <text text-anchor="middle" x="133" y="-458.8" font-family="Arial" font-size="14.00" fill="#c6c5fe">infrastructure/adapters/web/GetMetrics.ts</text>
 </g>
 <!-- infrastructure/adapters/web/GetMetrics.ts&#45;&gt;application/getRequestDTO.ts -->
-<g id="edge15" class="edge">
+<g id="edge16" class="edge">
 <title>infrastructure/adapters/web/GetMetrics.ts&#45;&gt;application/getRequestDTO.ts</title>
 <path fill="none" stroke="#757575" d="M265.62,-452.82C276.17,-452.05 286.76,-451.27 297.14,-450.5"/>
 <polygon fill="#757575" stroke="#757575" points="297.07,-454.02 306.78,-449.8 296.55,-447.04 297.07,-454.02"/>
 </g>
 <!-- infrastructure/adapters/web/GetMetrics.ts&#45;&gt;infrastructure/frameworks/end.ts -->
-<g id="edge16" class="edge">
+<g id="edge17" class="edge">
 <title>infrastructure/adapters/web/GetMetrics.ts&#45;&gt;infrastructure/frameworks/end.ts</title>
 <path fill="none" stroke="#757575" d="M173.55,-450.58C221.7,-436.06 303.06,-411.53 355.64,-395.68"/>
 <polygon fill="#757575" stroke="#757575" points="356.39,-399.11 364.95,-392.87 354.37,-392.41 356.39,-399.11"/>
 </g>
 <!-- infrastructure/adapters/web/GetMetrics.ts&#45;&gt;infrastructure/frameworks/getRepo.ts -->
-<g id="edge17" class="edge">
+<g id="edge18" class="edge">
 <title>infrastructure/adapters/web/GetMetrics.ts&#45;&gt;infrastructure/frameworks/getRepo.ts</title>
 <path fill="none" stroke="#757575" d="M265.64,-466.95C363.88,-470.27 497.46,-474.79 595.34,-478.1"/>
 <polygon fill="#757575" stroke="#757575" points="595.17,-481.6 605.28,-478.44 595.4,-474.6 595.17,-481.6"/>
 </g>
 <!-- usecases/getMetrics.ts -->
-<g id="node22" class="node">
+<g id="node24" class="node">
 <title>usecases/getMetrics.ts</title>
 <path fill="none" stroke="#c6c5fe" d="M476.83,-535C476.83,-535 337.17,-535 337.17,-535 333.33,-535 329.5,-531.17 329.5,-527.33 329.5,-527.33 329.5,-519.67 329.5,-519.67 329.5,-515.83 333.33,-512 337.17,-512 337.17,-512 476.83,-512 476.83,-512 480.67,-512 484.5,-515.83 484.5,-519.67 484.5,-519.67 484.5,-527.33 484.5,-527.33 484.5,-531.17 480.67,-535 476.83,-535"/>
 <text text-anchor="middle" x="407" y="-519.8" font-family="Arial" font-size="14.00" fill="#c6c5fe">usecases/getMetrics.ts</text>
 </g>
 <!-- infrastructure/adapters/web/GetMetrics.ts&#45;&gt;usecases/getMetrics.ts -->
-<g id="edge18" class="edge">
+<g id="edge19" class="edge">
 <title>infrastructure/adapters/web/GetMetrics.ts&#45;&gt;usecases/getMetrics.ts</title>
 <path fill="none" stroke="#757575" d="M187.41,-474.48C231.67,-484.4 294.71,-498.54 341.73,-509.09"/>
 <polygon fill="#757575" stroke="#757575" points="340.71,-512.44 351.23,-511.22 342.24,-505.61 340.71,-512.44"/>
@@ -308,48 +350,6 @@
 <title>usecases/getMetrics.ts&#45;&gt;domain/services/Metrics.ts</title>
 <path fill="none" stroke="#757575" d="M484.86,-523.5C527.32,-523.5 580.56,-523.5 626.15,-523.5"/>
 <polygon fill="#757575" stroke="#757575" points="626.05,-527 636.05,-523.5 626.05,-520 626.05,-527"/>
-</g>
-<!-- infrastructure/authorizers/Authorizer.ts -->
-<g id="node23" class="node">
-<title>infrastructure/authorizers/Authorizer.ts</title>
-<path fill="none" stroke="#c6c5fe" d="M247.83,-596C247.83,-596 18.17,-596 18.17,-596 14.33,-596 10.5,-592.17 10.5,-588.33 10.5,-588.33 10.5,-580.67 10.5,-580.67 10.5,-576.83 14.33,-573 18.17,-573 18.17,-573 247.83,-573 247.83,-573 251.67,-573 255.5,-576.83 255.5,-580.67 255.5,-580.67 255.5,-588.33 255.5,-588.33 255.5,-592.17 251.67,-596 247.83,-596"/>
-<text text-anchor="middle" x="133" y="-580.8" font-family="Arial" font-size="14.00" fill="#c6c5fe">infrastructure/authorizers/Authorizer.ts</text>
-</g>
-<!-- usecases/authorize.ts -->
-<g id="node24" class="node">
-<title>usecases/authorize.ts</title>
-<path fill="none" stroke="#c6c5fe" d="M472.83,-596C472.83,-596 341.17,-596 341.17,-596 337.33,-596 333.5,-592.17 333.5,-588.33 333.5,-588.33 333.5,-580.67 333.5,-580.67 333.5,-576.83 337.33,-573 341.17,-573 341.17,-573 472.83,-573 472.83,-573 476.67,-573 480.5,-576.83 480.5,-580.67 480.5,-580.67 480.5,-588.33 480.5,-588.33 480.5,-592.17 476.67,-596 472.83,-596"/>
-<text text-anchor="middle" x="407" y="-580.8" font-family="Arial" font-size="14.00" fill="#c6c5fe">usecases/authorize.ts</text>
-</g>
-<!-- infrastructure/authorizers/Authorizer.ts&#45;&gt;usecases/authorize.ts -->
-<g id="edge19" class="edge">
-<title>infrastructure/authorizers/Authorizer.ts&#45;&gt;usecases/authorize.ts</title>
-<path fill="none" stroke="#757575" d="M255.68,-584.5C278,-584.5 300.84,-584.5 321.75,-584.5"/>
-<polygon fill="#757575" stroke="#757575" points="321.65,-588 331.65,-584.5 321.65,-581 321.65,-588"/>
-</g>
-<!-- infrastructure/frameworks/authorization/generatePolicy.ts -->
-<g id="node26" class="node">
-<title>infrastructure/frameworks/authorization/generatePolicy.ts</title>
-<path fill="none" stroke="#cfffac" d="M897.33,-617C897.33,-617 555.67,-617 555.67,-617 551.83,-617 548,-613.17 548,-609.33 548,-609.33 548,-601.67 548,-601.67 548,-597.83 551.83,-594 555.67,-594 555.67,-594 897.33,-594 897.33,-594 901.17,-594 905,-597.83 905,-601.67 905,-601.67 905,-609.33 905,-609.33 905,-613.17 901.17,-617 897.33,-617"/>
-<text text-anchor="middle" x="726.5" y="-601.8" font-family="Arial" font-size="14.00" fill="#cfffac">infrastructure/frameworks/authorization/generatePolicy.ts</text>
-</g>
-<!-- usecases/authorize.ts&#45;&gt;infrastructure/frameworks/authorization/generatePolicy.ts -->
-<g id="edge28" class="edge">
-<title>usecases/authorize.ts&#45;&gt;infrastructure/frameworks/authorization/generatePolicy.ts</title>
-<path fill="none" stroke="#757575" d="M480.84,-589.32C497.91,-590.45 516.87,-591.7 536.47,-593"/>
-<polygon fill="#757575" stroke="#757575" points="536.03,-596.48 546.24,-593.64 536.49,-589.49 536.03,-596.48"/>
-</g>
-<!-- infrastructure/frameworks/authorization/handleCors.ts -->
-<g id="node27" class="node">
-<title>infrastructure/frameworks/authorization/handleCors.ts</title>
-<path fill="none" stroke="#cfffac" d="M887.83,-576C887.83,-576 565.17,-576 565.17,-576 561.33,-576 557.5,-572.17 557.5,-568.33 557.5,-568.33 557.5,-560.67 557.5,-560.67 557.5,-556.83 561.33,-553 565.17,-553 565.17,-553 887.83,-553 887.83,-553 891.67,-553 895.5,-556.83 895.5,-560.67 895.5,-560.67 895.5,-568.33 895.5,-568.33 895.5,-572.17 891.67,-576 887.83,-576"/>
-<text text-anchor="middle" x="726.5" y="-560.8" font-family="Arial" font-size="14.00" fill="#cfffac">infrastructure/frameworks/authorization/handleCors.ts</text>
-</g>
-<!-- usecases/authorize.ts&#45;&gt;infrastructure/frameworks/authorization/handleCors.ts -->
-<g id="edge29" class="edge">
-<title>usecases/authorize.ts&#45;&gt;infrastructure/frameworks/authorization/handleCors.ts</title>
-<path fill="none" stroke="#757575" d="M480.84,-579.91C500.59,-578.67 522.87,-577.26 545.74,-575.82"/>
-<polygon fill="#757575" stroke="#757575" points="545.74,-579.33 555.5,-575.21 545.3,-572.34 545.74,-579.33"/>
 </g>
 <!-- infrastructure/frameworks/addCustomMetric.ts -->
 <g id="node25" class="node">
