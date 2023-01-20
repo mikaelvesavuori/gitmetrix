@@ -145,6 +145,7 @@ Note that all unit tests use a separate authorization token that you don't have 
 
 #### Optional
 
+- `custom.config.maxDateRange`: This defaults to `30` but can be changed.
 - `custom.config.tableName`: This defaults to `gitmetrix` but can be changed.
 
 #### Environment variables
