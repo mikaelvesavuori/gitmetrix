@@ -5,7 +5,9 @@ import { EventInput } from '../../../interfaces/Lambda';
 
 import { getMetrics } from '../../../usecases/getMetrics';
 
+import { createQueryStringParamsObjectFromString } from '../../../application/createQueryStringParamsObjectFromString';
 import { getRequestDTO } from '../../../application/getRequestDTO';
+
 import { getRepo } from '../../frameworks/getRepo';
 import { end } from '../../frameworks/end';
 
@@ -24,7 +26,8 @@ export async function handler(event: EventInput, context: Record<string, any>) {
   });
 
   try {
-    const input = getRequestDTO(event.queryStringParameters || {});
+    const queryStringParameters = createQueryStringParamsObjectFromString(event);
+    const input = getRequestDTO(queryStringParameters);
     const repository = getRepo(process.env.NODE_ENV === 'test');
     const metrics = await getMetrics(repository, input);
     return end(200, metrics);
