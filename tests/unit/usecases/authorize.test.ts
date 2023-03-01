@@ -5,42 +5,31 @@ import { authorize } from '../../../src/usecases/authorize';
 test.serial(
   'It should allow a call with the correct authorization query string parameter',
   async (t) => {
-    const expected = 'Allow';
-    const response = await authorize({
+    const expected = true;
+    const response: Record<string, any> = await authorize({
       body: {},
       headers: {
         'User-Agent': ''
       },
-      httpMethod: 'GET',
-      methodArn: '',
-      queryStringParameters: {
-        authorization: '65a662ab-9d57-4f72-aff1-3a63e0738ace'
-      },
-      resource: '/AddMetrics'
+      identitySource: ['65a662ab-9d57-4f72-aff1-3a63e0738ace']
     });
-    // @ts-ignore
-    const effect = response['policyDocument']['Statement'][0]['Effect'];
-    t.deepEqual(effect, expected);
+    const result = response['isAuthorized'];
+    t.deepEqual(result, expected);
   }
 );
 
 test.serial('It should allow a call with the correct authorization header', async (t) => {
-  const expected = 'Allow';
-  const response = await authorize({
+  const expected = true;
+  const response: Record<string, any> = await authorize({
     body: {},
     headers: {
       'User-Agent': '',
       Authorization: '65a662ab-9d57-4f72-aff1-3a63e0738ace'
     },
-    httpMethod: 'GET',
-    methodArn: '',
-    // @ts-ignore
-    queryStringParameters: {},
-    resource: '/AddMetrics'
+    identitySource: []
   });
-  // @ts-ignore
-  const effect = response['policyDocument']['Statement'][0]['Effect'];
-  t.deepEqual(effect, expected);
+  const result = response['isAuthorized'];
+  t.deepEqual(result, expected);
 });
 
 test.serial('It should return a CORS response for an OPTIONS call', async (t) => {
@@ -52,16 +41,17 @@ test.serial('It should return a CORS response for an OPTIONS call', async (t) =>
     },
     statusCode: 200
   };
-  const response = await authorize({
+  const response: Record<string, any> = await authorize({
     body: {},
     headers: {
       'User-Agent': ''
     },
-    httpMethod: 'OPTIONS',
-    methodArn: '',
-    // @ts-ignore
-    queryStringParameters: {},
-    resource: '/AddMetrics'
+    requestContext: {
+      http: {
+        method: 'OPTIONS'
+      }
+    },
+    identitySource: []
   });
   t.deepEqual(response, expected);
 });
@@ -70,38 +60,27 @@ test.serial('It should return a CORS response for an OPTIONS call', async (t) =>
  * NEGATIVE TESTS
  */
 test.serial('It should deny a call without headers', async (t) => {
-  const expected = 'Deny';
-  const response = await authorize({
-    body: {},
-    httpMethod: 'GET',
-    methodArn: '',
-    // @ts-ignore
-    queryStringParameters: {},
-    resource: '/AddMetrics'
-  });
+  const expected = false;
   // @ts-ignore
-  const effect = response['policyDocument']['Statement'][0]['Effect'];
-  t.deepEqual(effect, expected);
+  const response: Record<string, any> = await authorize({
+    body: {}
+  });
+  const result = response['isAuthorized'];
+  t.deepEqual(result, expected);
 });
 
 test.serial(
   'It should deny a call with incorrect authorization query string parameter',
   async (t) => {
-    const expected = 'Deny';
-    const response = await authorize({
+    const expected = false;
+    const response: Record<string, any> = await authorize({
       body: {},
       headers: {
         'User-Agent': ''
       },
-      httpMethod: 'GET',
-      methodArn: '',
-      queryStringParameters: {
-        authorization: 'asdf'
-      },
-      resource: '/AddMetrics'
+      identitySource: ['asdf']
     });
-    // @ts-ignore
-    const effect = response['policyDocument']['Statement'][0]['Effect'];
-    t.deepEqual(effect, expected);
+    const result = response['isAuthorized'];
+    t.deepEqual(result, expected);
   }
 );

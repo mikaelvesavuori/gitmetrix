@@ -138,21 +138,22 @@ The below commands are the most critical ones. See `package.json` for more comma
 
 #### Required
 
-- `custom.config.accountNumber`: Your AWS account number.
-- `custom.config.authToken`: The "API key" or authorization token you want to use to secure your service.
+- `custom.config.awsAccountNumber`: Your AWS account number.
+- `custom.config.apiKey`: The "API key" or authorization token you want to use to secure your service.
 
 Note that all unit tests use a separate authorization token that you don't have to care about in regular use.
 
 #### Optional
 
 - `custom.config.maxDateRange`: This defaults to `30` but can be changed.
+- `custom.config.maxLifeInDays`: This defaults to `90` but can be changed.
 - `custom.config.tableName`: This defaults to `gitmetrix` but can be changed.
 
 #### Environment variables
 
 - `REGION`: The AWS region you want to use. Takes the value from `provider.region`.
 - `TABLE_NAME`: The DynamoDB table name you want to use. Takes the value from `custom.config.tableName`.
-- `AUTH_TOKEN`: Only available in the authorizer function. Takes the value from `custom.config.authToken`.
+- `API_KEY`: Only available in the authorizer function. Takes the value from `custom.config.apiKey`.
 
 ## Running locally
 
@@ -172,7 +173,9 @@ If you want a bit of test data to toy around with, run `npm run test:createdata`
 
 ## Deployment
 
-Run `npm run deploy`.
+First make sure that you have a fallback value for your AWS account number in `serverless.yml`, for example: `awsAccountNumber: ${opt:awsAccountNumber, '123412341234'}` or that you set the deployment script to use the flag, for example `npx sls deploy --awsAccountNumber 123412341234`.
+
+Then you can deploy with `npm run deploy`.
 
 ## Logging and metrics
 
@@ -189,7 +192,7 @@ Create a webhook in your repository's `Settings` page. Under the `Code and autom
 For `Payload URL`—assuming you are using the default API endpoint—add your endpoint and auth token in the general format of
 
 ```
-https://RANDOM.execute-api.REGION.amazonaws.com/STAGE/metrics?authorization=AUTH_TOKEN
+https://RANDOM.execute-api.REGION.amazonaws.com/STAGE/metrics?authorization=API_KEY
 ```
 
 Next, set the content type to `application/json`, skip secrets, make sure SSL is enabled, and select the following event types to trigger the webhook:
@@ -337,6 +340,10 @@ GET {BASE_URL}/metrics?repo=SOMEORG/SOMEREPO&last=30&offset=-4
 ### Anonymous data
 
 Gitmetrix does not collect, store, or process any details on a given individual and their work. All data is strictly anonymous and aggregated. You should feel entirely confident that nothing invasive is happening with the data handled with Gitmetrix.
+
+### Data is removed after a period of time
+
+To keep the volume of data manageable, version `2.1.0` introduces a `maxLifeInDays` setting. It defaults to `90` days, after which DynamoDB will remove the record after the given period + 1 day. You can set the value to any other value, as needed.
 
 ### What about the authorization token in the query string parameter?
 

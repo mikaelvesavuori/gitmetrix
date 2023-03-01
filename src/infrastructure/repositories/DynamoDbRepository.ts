@@ -17,6 +17,8 @@ import { DynamoItems } from '../../interfaces/DynamoDb';
 import { CleanedItem } from '../../interfaces/Item';
 import { MetricsResult } from '../../interfaces/Metrics';
 
+import { getExpiryTime } from '../../application/getExpiryTime';
+
 import { getCleanedItems } from '../frameworks/getCleanedItems';
 import { addCustomMetric } from '../frameworks/addCustomMetric';
 
@@ -131,9 +133,10 @@ export class DynamoDbRepository implements Repository {
     const command = {
       ExpressionAttributeValues: {
         ':p': { N: '1' },
-        ':start_value': { N: '0' }
+        ':start_value': { N: '0' },
+        ':exp': { S: getExpiryTime() }
       },
-      UpdateExpression: 'SET p = if_not_exists(p, :start_value) + :p'
+      UpdateExpression: 'SET p = if_not_exists(p, :start_value) + :p, expiresAt = :exp'
     };
 
     await this.updateItem(repo, timestamp, command);
@@ -152,9 +155,10 @@ export class DynamoDbRepository implements Repository {
     const command = {
       ExpressionAttributeValues: {
         ':o': { N: '1' },
-        ':start_value': { N: '0' }
+        ':start_value': { N: '0' },
+        ':exp': { S: getExpiryTime() }
       },
-      UpdateExpression: 'SET o = if_not_exists(o, :start_value) + :o'
+      UpdateExpression: 'SET o = if_not_exists(o, :start_value) + :o, expiresAt = :exp'
     };
 
     await this.updateItem(repo, timestamp, command);
@@ -169,9 +173,10 @@ export class DynamoDbRepository implements Repository {
     const command = {
       ExpressionAttributeValues: {
         ':m': { N: '1' },
-        ':start_value': { N: '0' }
+        ':start_value': { N: '0' },
+        ':exp': { S: getExpiryTime() }
       },
-      UpdateExpression: 'SET m = if_not_exists(m, :start_value) + :m'
+      UpdateExpression: 'SET m = if_not_exists(m, :start_value) + :m, expiresAt = :exp'
     };
 
     await this.updateItem(repo, timestamp, command);
@@ -186,9 +191,10 @@ export class DynamoDbRepository implements Repository {
     const command = {
       ExpressionAttributeValues: {
         ':cl': { N: '1' },
-        ':start_value': { N: '0' }
+        ':start_value': { N: '0' },
+        ':exp': { S: getExpiryTime() }
       },
-      UpdateExpression: 'SET cl = if_not_exists(cl, :start_value) + :cl'
+      UpdateExpression: 'SET cl = if_not_exists(cl, :start_value) + :cl, expiresAt = :exp'
     };
 
     await this.updateItem(repo, timestamp, command);
@@ -207,9 +213,10 @@ export class DynamoDbRepository implements Repository {
     const command = {
       ExpressionAttributeValues: {
         ':cm': { N: '1' },
-        ':start_value': { N: '0' }
+        ':start_value': { N: '0' },
+        ':exp': { S: getExpiryTime() }
       },
-      UpdateExpression: 'SET cm = if_not_exists(cm, :start_value) + :cm'
+      UpdateExpression: 'SET cm = if_not_exists(cm, :start_value) + :cm, expiresAt = :exp'
     };
 
     await this.updateItem(repo, timestamp, command);
@@ -224,9 +231,10 @@ export class DynamoDbRepository implements Repository {
     const command = {
       ExpressionAttributeValues: {
         ':ap': { N: '1' },
-        ':start_value': { N: '0' }
+        ':start_value': { N: '0' },
+        ':exp': { S: getExpiryTime() }
       },
-      UpdateExpression: 'SET ap = if_not_exists(ap, :start_value) + :ap'
+      UpdateExpression: 'SET ap = if_not_exists(ap, :start_value) + :ap, expiresAt = :exp'
     };
 
     await this.updateItem(repo, timestamp, command);
@@ -241,9 +249,10 @@ export class DynamoDbRepository implements Repository {
     const command = {
       ExpressionAttributeValues: {
         ':chr': { N: '1' },
-        ':start_value': { N: '0' }
+        ':start_value': { N: '0' },
+        ':exp': { S: getExpiryTime() }
       },
-      UpdateExpression: 'SET chr = if_not_exists(chr, :start_value) + :chr'
+      UpdateExpression: 'SET chr = if_not_exists(chr, :start_value) + :chr, expiresAt = :exp'
     };
 
     await this.updateItem(repo, timestamp, command);
@@ -265,10 +274,11 @@ export class DynamoDbRepository implements Repository {
         ':ad': { N: `${additions}` },
         ':chf': { N: `${changedFiles}` },
         ':d': { N: `${deletions}` },
-        ':start_value': { N: '0' }
+        ':start_value': { N: '0' },
+        ':exp': { S: getExpiryTime() }
       },
       UpdateExpression:
-        'SET ad = if_not_exists(ad, :start_value) + :ad, chf = if_not_exists(chf, :start_value) + :chf, d = if_not_exists(d, :start_value) + :d'
+        'SET ad = if_not_exists(ad, :start_value) + :ad, chf = if_not_exists(chf, :start_value) + :chf, d = if_not_exists(d, :start_value) + :d, expiresAt = :exp'
     };
 
     await this.updateItem(repo, timestamp, command);
@@ -284,9 +294,10 @@ export class DynamoDbRepository implements Repository {
     const command = {
       ExpressionAttributeValues: {
         ':pt': { N: `${time}` },
-        ':start_value': { N: '0' }
+        ':start_value': { N: '0' },
+        ':exp': { S: getExpiryTime() }
       },
-      UpdateExpression: 'SET pt = if_not_exists(pt, :start_value) + :pt'
+      UpdateExpression: 'SET pt = if_not_exists(pt, :start_value) + :pt, expiresAt = :exp'
     };
 
     await this.updateItem(repo, timestamp, command);
@@ -302,9 +313,10 @@ export class DynamoDbRepository implements Repository {
     const command = {
       ExpressionAttributeValues: {
         ':rt': { N: `${time}` },
-        ':start_value': { N: '0' }
+        ':start_value': { N: '0' },
+        ':exp': { S: getExpiryTime() }
       },
-      UpdateExpression: 'SET rt = if_not_exists(rt, :start_value) + :rt'
+      UpdateExpression: 'SET rt = if_not_exists(rt, :start_value) + :rt, expiresAt = :exp'
     };
 
     await this.updateItem(repo, timestamp, command);

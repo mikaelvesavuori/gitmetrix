@@ -1,4 +1,4 @@
-import { authorize } from '../../../usecases/authorize';
+import { authorize } from '../../usecases/authorize';
 
 /**
  * @description Lambda handler function to run our authorization use case.

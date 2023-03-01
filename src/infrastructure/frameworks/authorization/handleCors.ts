@@ -1,5 +1,3 @@
-import { APIGatewayProxyResult } from 'aws-lambda';
-
 /**
  * @description CORS handler.
  */
@@ -11,5 +9,5 @@ export function handleCors() {
       'Access-Control-Allow-Origin': '*'
     },
     body: JSON.stringify('OK')
-  } as APIGatewayProxyResult;
+  };
 }

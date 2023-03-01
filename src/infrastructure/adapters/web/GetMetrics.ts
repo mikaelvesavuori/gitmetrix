@@ -1,7 +1,7 @@
 import { MikroLog } from 'mikrolog';
 import { MikroMetric } from 'mikrometric';
 
-import { EventInput } from '../../../interfaces/Aws';
+import { EventInput } from '../../../interfaces/Lambda';
 
 import { getMetrics } from '../../../usecases/getMetrics';
 

@@ -11,10 +11,13 @@ import { getRepo } from '../infrastructure/frameworks/getRepo';
  */
 export async function addMetric(input: MetricInputDto) {
   const headers: Record<string, any> = getLowerCaseHeaders(input.headers || {});
-  input.headers = headers;
+  const _input = {
+    ...input,
+    headers
+  };
 
-  const parser = getParser(input.headers);
-  const parsedInputs = parser.parse(input);
+  const parser = getParser(_input.headers);
+  const parsedInputs = parser.parse(_input);
   const repo = getRepo(process.env.NODE_ENV === 'test');
   await mapResultToUsecase(parsedInputs, repo);
 }

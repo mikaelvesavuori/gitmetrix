@@ -110,21 +110,6 @@ export class NoMappedKeyError extends Error {
 }
 
 /**
- * @description Used when an expected `authorization` query string parameter is missing.
- */
-export class MissingAuthorizationError extends Error {
-  constructor() {
-    super();
-    this.name = 'MissingAuthorizationError';
-    const message = `Missing an expected value in the "authorization" query string parameter!`;
-    this.message = message;
-    this.cause = {
-      statusCode: 400
-    };
-  }
-}
-
-/**
  * @description Used when an incorrect authorization token is used.
  */
 export class InvalidAuthTokenError extends Error {
