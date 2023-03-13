@@ -6,6 +6,7 @@ test.serial(
   'It should allow a call with the correct authorization query string parameter',
   async (t) => {
     const expected = true;
+    // @ts-ignore
     const response: Record<string, any> = await authorize({
       body: {},
       headers: {
@@ -20,6 +21,7 @@ test.serial(
 
 test.serial('It should allow a call with the correct authorization header', async (t) => {
   const expected = true;
+  // @ts-ignore
   const response: Record<string, any> = await authorize({
     body: {},
     headers: {
@@ -41,6 +43,7 @@ test.serial('It should return a CORS response for an OPTIONS call', async (t) =>
     },
     statusCode: 200
   };
+  // @ts-ignore
   const response: Record<string, any> = await authorize({
     body: {},
     headers: {
@@ -73,6 +76,7 @@ test.serial(
   'It should deny a call with incorrect authorization query string parameter',
   async (t) => {
     const expected = false;
+    // @ts-ignore
     const response: Record<string, any> = await authorize({
       body: {},
       headers: {

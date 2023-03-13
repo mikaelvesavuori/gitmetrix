@@ -4,6 +4,7 @@
 export type EventInput = {
   body: Record<string, any>;
   headers: Headers;
+  queryStringParameters: Record<string, any>;
   requestContext?: RequestContext;
   identitySource: string[];
 };

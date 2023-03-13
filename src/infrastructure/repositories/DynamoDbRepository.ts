@@ -2,7 +2,8 @@ import {
   DynamoDBClient,
   UpdateItemCommand,
   QueryCommand,
-  PutItemCommand
+  PutItemCommand,
+  QueryCommandOutput
 } from '@aws-sdk/client-dynamodb';
 
 import { CacheRequest, DataRequest, Repository } from '../../interfaces/Repository';
@@ -88,15 +89,14 @@ export class DynamoDbRepository implements Repository {
       Limit: 1
     };
 
-    // @ts-ignore
-    const data: DynamoItems | null =
+    const data: DynamoItems | QueryCommandOutput | null =
       process.env.NODE_ENV !== 'test'
         ? await this.dynamoDb.send(new QueryCommand(command))
         : getCachedTestData(key, from, to);
 
     addCustomMetric('cached');
 
-    if (data?.Items && data.Items.length > 0) return JSON.parse(data.Items[0].data['S']);
+    if (data?.Items && data.Items.length > 0) return JSON.parse(data?.Items[0].data?.['S'] || '');
 
     return {} as any;
   }

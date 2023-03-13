@@ -1,7 +1,7 @@
 {
   "name": "gitmetrix",
   "description": "Helps you find your team-level engineering metrics",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "author": "Mikael Vesavuori",
   "license": "MIT",
   "keywords": [
@@ -67,7 +67,7 @@
     "ts-node": "latest",
     "tslib": "2",
     "type-coverage": "2",
-    "typedoc": "0.23.24",
+    "typedoc": "0.23.26",
     "typescript": "4"
   },
   "ava": {

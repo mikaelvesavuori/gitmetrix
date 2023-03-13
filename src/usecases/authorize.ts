@@ -41,4 +41,7 @@ export async function authorize(event: EventInput) {
 }
 
 const getAuthToken = (event: EventInput) =>
-  event.headers?.['Authorization'] || event?.identitySource[0] || '';
+  event.headers?.['Authorization'] ||
+  event?.queryStringParameters?.['authorization'] ||
+  event?.identitySource[0] ||
+  '';

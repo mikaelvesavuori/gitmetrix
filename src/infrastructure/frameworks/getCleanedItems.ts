@@ -27,7 +27,7 @@ function createCleanedItem(item: DynamoItem): CleanedItem {
 
   Object.entries(item).forEach((entry: Entry) => {
     const [key, value] = entry;
-    if (key === 'pk' || key === 'sk') return;
+    if (key === 'pk' || key === 'sk' || key === 'expiresAt') return;
     const mappedKey = getMappedKey(key);
     const val = Object.values(value)[0];
     const fixedValue = key === 'pt' || key === 'rt' ? prettifyTime(parseInt(val)) : val;

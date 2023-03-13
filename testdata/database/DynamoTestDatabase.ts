@@ -1,3 +1,5 @@
+import { DynamoItems } from '../../src/interfaces/DynamoDb';
+
 /**
  * @description Dummy data for testing purposes.
  */
@@ -75,7 +77,7 @@ export const testCachedMetrics = {
 /**
  * @description Return cached test data or basic empty shape.
  */
-export function getCachedTestData(key: string, fromDate: string, toDate: string) {
+export function getCachedTestData(key: string, fromDate: string, toDate: string): DynamoItems {
   const fixedKey = key.toUpperCase();
   const range = `${fromDate}_${toDate}`;
 
