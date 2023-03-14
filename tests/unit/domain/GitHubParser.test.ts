@@ -53,6 +53,16 @@ test.serial('It should parse a "ready for review" event', (t) => {
 test.serial('It should parse a "PR opened" event', (t) => {
   const expected: any = [
     {
+      change: {
+        additions: 1,
+        changedFiles: 1,
+        deletions: 0
+      },
+      repo: 'SOMEORG/SOMEREPO',
+      timestamp: currentTime,
+      type: 'ReviewSize'
+    },
+    {
       timestamp: currentTime,
       repo: 'SOMEORG/SOMEREPO',
       type: 'Opened'

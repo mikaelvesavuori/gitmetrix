@@ -1,7 +1,7 @@
 {
   "name": "gitmetrix",
   "description": "Helps you find your team-level engineering metrics",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "author": "Mikael Vesavuori",
   "license": "MIT",
   "keywords": [

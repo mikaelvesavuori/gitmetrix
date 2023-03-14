@@ -105,22 +105,15 @@ export class GitHubParser implements Parser {
 
     // PR state: Open
     if (prState === 'open') {
-      if (action === 'ready_for_review') {
-        results.push(this.handleReviewSize(input));
-      } else if (action === 'opened') {
-        results.push(this.resultService.produceResult({ type: 'Opened' }));
-      }
+      results.push(this.handleReviewSize(input));
+      if (action === 'opened') results.push(this.resultService.produceResult({ type: 'Opened' }));
     }
     // PR state: Closed
     else if (prState === 'closed' && action === 'closed') {
       if (mergeState) results.push(this.resultService.produceResult({ type: 'Merged' }));
       results.push(this.resultService.produceResult({ type: 'Closed' }));
       // If this is simply closed, then we have no `merged_at` time
-      if (
-        input['body']['pull_request']['merged_at'] &&
-        input['body']['pull_request']['review_comments'] > 0
-      )
-        results.push(this.handleReviewTime(input));
+      if (input['body']['pull_request']['merged_at']) results.push(this.handleReviewTime(input));
     } else throw new NoPullRequestParsingMatchError();
 
     return results.filter((result: ParsedResult | ParsedResultBasic) => result);
