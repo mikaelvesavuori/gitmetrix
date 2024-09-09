@@ -8,7 +8,7 @@ import { InvalidAuthTokenError } from '../application/errors/errors';
 
 const AUTHORIZATION_TOKEN =
   process.env.NODE_ENV === 'test'
-    ? '65a662ab-9d57-4f72-aff1-3a63e0738ace'
+    ? '6d0bf792-ad5a-49af-9ff5-78fbc15a3e8a'
     : process.env.API_KEY || '';
 
 /**
@@ -16,8 +16,8 @@ const AUTHORIZATION_TOKEN =
  * parameter or `Authorization` header for an authorization token and see if it's
  * the correct and expected one.
  *
- * @example `?authorization=65a662ab-9d57-4f72-aff1-3a63e0738ace` query string parameter.
- * @example `Authorization: 65a662ab-9d57-4f72-aff1-3a63e0738ace` header.
+ * @example `?authorization=6d0bf792-ad5a-49af-9ff5-78fbc15a3e8a` query string parameter.
+ * @example `Authorization: 6d0bf792-ad5a-49af-9ff5-78fbc15a3e8a` header.
  */
 export async function authorize(event: EventInput) {
   try {

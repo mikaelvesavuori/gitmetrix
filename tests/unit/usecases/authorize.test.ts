@@ -10,7 +10,7 @@ test('It should allow a call with the correct authorization query string paramet
     headers: {
       'User-Agent': ''
     },
-    identitySource: ['65a662ab-9d57-4f72-aff1-3a63e0738ace']
+    identitySource: ['6d0bf792-ad5a-49af-9ff5-78fbc15a3e8a']
   });
   const result = response['isAuthorized'];
   expect(result).toBe(expected);
@@ -23,7 +23,7 @@ test('It should allow a call with the correct authorization header', async () =>
     body: {},
     headers: {
       'User-Agent': '',
-      Authorization: '65a662ab-9d57-4f72-aff1-3a63e0738ace'
+      Authorization: '6d0bf792-ad5a-49af-9ff5-78fbc15a3e8a'
     },
     identitySource: []
   });
