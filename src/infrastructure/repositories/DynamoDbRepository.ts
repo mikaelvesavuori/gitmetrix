@@ -21,7 +21,6 @@ import { MetricsResult } from '../../interfaces/Metrics';
 import { getExpiryTime } from '../../application/getExpiryTime';
 
 import { getCleanedItems } from '../frameworks/getCleanedItems';
-import { addCustomMetric } from '../frameworks/addCustomMetric';
 
 import { MissingEnvironmentVariablesDynamoError } from '../../application/errors/errors';
 
@@ -69,7 +68,6 @@ export class DynamoDbRepository implements Repository {
   public async getMetrics(dataRequest: DataRequest): Promise<CleanedItem[]> {
     const cachedData = await this.getItem(dataRequest);
 
-    addCustomMetric('uncached');
     return getCleanedItems(cachedData?.Items || []);
   }
 
@@ -93,8 +91,6 @@ export class DynamoDbRepository implements Repository {
       process.env.NODE_ENV !== 'test'
         ? await this.dynamoDb.send(new QueryCommand(command))
         : getCachedTestData(key, from, to);
-
-    addCustomMetric('cached');
 
     if (data?.Items && data.Items.length > 0) return JSON.parse(data?.Items[0].data?.['S'] || '');
 
@@ -258,9 +254,9 @@ export class DynamoDbRepository implements Repository {
     await this.updateItem(repo, timestamp, command);
   }
 
-  ////////////////////
-  // Sizes and times /
-  ////////////////////
+  /////////////////////
+  // Sizes and times //
+  /////////////////////
 
   /**
    * @description Add all metrics for a review size update.

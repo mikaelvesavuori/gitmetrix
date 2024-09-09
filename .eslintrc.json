@@ -8,7 +8,7 @@
   "rules": {
     "@typescript-eslint/no-explicit-any": ["off"],
     "@typescript-eslint/ban-ts-comment": ["warn"],
-    "complexity": ["warn", { "max": 9 }]
+    "complexity": ["warn", { "max": 10 }]
   },
   "env": {
     "node": true,

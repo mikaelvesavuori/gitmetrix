@@ -5,18 +5,24 @@ import { Repository } from '../interfaces/Repository';
 import { RequestDTO } from '../interfaces/Input';
 import { MetricsResult } from '../interfaces/Metrics';
 
+import { addCustomMetric } from '../infrastructure/frameworks/addCustomMetric';
+
 /**
  * @description Get metrics from persistence.
  */
 export async function getMetrics(repository: Repository, input: RequestDTO) {
   const cachedMetrics = await getCachedMetricsFromDatabase(input, repository);
-  if (cachedMetrics) return cachedMetrics;
+
+  if (cachedMetrics) {
+    addCustomMetric('cached');
+    return cachedMetrics;
+  }
 
   const metricsData = await getMetricsFromDatabase(input, repository);
   const metrics = compileResultMetrics(input, metricsData);
-
   await cacheMetrics(input, repository, metrics);
 
+  addCustomMetric('uncached');
   return metrics;
 }
 
@@ -29,7 +35,7 @@ async function getCachedMetricsFromDatabase(
 ): Promise<MetricsResult | void> {
   const { repo, from, to } = input;
 
-  const cachedData = await repository.getCachedMetrics({ key: repo, from: from, to: to });
+  const cachedData = await repository.getCachedMetrics({ key: repo, from, to });
 
   if (Object.keys(cachedData).length > 0) return cachedData;
 }
@@ -42,8 +48,8 @@ async function getMetricsFromDatabase(input: RequestDTO, repository: Repository)
 
   return await repository.getMetrics({
     key: repo,
-    from: from,
-    to: to
+    from,
+    to
   });
 }
 

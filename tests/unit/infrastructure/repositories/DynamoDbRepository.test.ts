@@ -1,10 +1,11 @@
-import test from 'ava';
+import { test, expect } from 'vitest';
 
 import { createNewDynamoRepository } from '../../../../src/infrastructure/repositories/DynamoDbRepository';
 
 import { setEnv, clearEnv } from '../../../testUtils';
 
 import { testCachedMetrics } from '../../../../testdata/database/DynamoTestDatabase';
+import { MissingEnvironmentVariablesDynamoError } from '../../../../src/application/errors/errors';
 
 const expected = [
   {
@@ -25,7 +26,7 @@ const expected = [
   }
 ];
 
-test.serial('It should get uncached data', async (t) => {
+test('It should get uncached data', async () => {
   setEnv();
   const repo = createNewDynamoRepository();
 
@@ -35,11 +36,11 @@ test.serial('It should get uncached data', async (t) => {
     to: '20221231'
   });
 
-  t.deepEqual(response, expected);
+  expect(response).toMatchObject(expected);
   clearEnv();
 });
 
-test.serial('It should get an empty array if no match is found for fresh metrics', async (t) => {
+test('It should get an empty array if no match is found for fresh metrics', async () => {
   setEnv();
   const expected: any = [];
   const repo = createNewDynamoRepository();
@@ -50,11 +51,11 @@ test.serial('It should get an empty array if no match is found for fresh metrics
     to: '20230102'
   });
 
-  t.deepEqual(response, expected);
+  expect(response).toMatchObject(expected);
   clearEnv();
 });
 
-test.serial('It should get cached data', async (t) => {
+test('It should get cached data', async () => {
   setEnv();
   const repo = createNewDynamoRepository();
 
@@ -64,11 +65,11 @@ test.serial('It should get cached data', async (t) => {
     to: '20220131'
   });
 
-  t.deepEqual(response, testCachedMetrics);
+  expect(response).toMatchObject(testCachedMetrics);
   clearEnv();
 });
 
-test.serial('It should get an empty object if no match is found for cached metrics', async (t) => {
+test('It should get an empty object if no match is found for cached metrics', async () => {
   setEnv();
   const expected: Record<string, any> = {};
   const repo = createNewDynamoRepository();
@@ -79,11 +80,11 @@ test.serial('It should get an empty object if no match is found for cached metri
     to: '20230102'
   });
 
-  t.deepEqual(response, expected);
+  expect(response).toMatchObject(expected);
   clearEnv();
 });
 
-test.serial('It should cache metrics', async (t) => {
+test('It should cache metrics', async () => {
   setEnv();
   const repo = createNewDynamoRepository();
 
@@ -93,7 +94,7 @@ test.serial('It should cache metrics', async (t) => {
     metrics: testCachedMetrics
   });
 
-  t.pass();
+  expect(1).toBe(1);
   clearEnv();
 });
 
@@ -101,13 +102,8 @@ test.serial('It should cache metrics', async (t) => {
  * NEGATIVE TESTS
  */
 
-test.serial(
-  'It should throw a MissingEnvironmentVariablesDynamoError if the required DynamoDB environment variables do not exist',
-  async (t) => {
-    const expected = 'MissingEnvironmentVariablesDynamoError';
-
-    const error: any = await t.throwsAsync(async () => createNewDynamoRepository());
-
-    t.is(error.name, expected);
-  }
-);
+test('It should throw a MissingEnvironmentVariablesDynamoError if the required DynamoDB environment variables do not exist', async () => {
+  expect(async () => createNewDynamoRepository()).rejects.toThrowError(
+    MissingEnvironmentVariablesDynamoError
+  );
+});

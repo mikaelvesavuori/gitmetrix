@@ -63,7 +63,7 @@ async function writeMetrics(metrics: Record<string, any>[]) {
 /**
  * @description The controller for test data generation.
  */
-async function createTestDataController(dataCount = DEFAULT_COUNT) {
+async function createTestDataController(dataCount = DEFAULT_COUNT as number) {
   const demoData: any = [];
   for (let index = 0; index < dataCount; index++) {
     const date = new Date('2022-10-01');

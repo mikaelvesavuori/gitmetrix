@@ -1,7 +1,15 @@
-import test from 'ava';
+import { test, expect } from 'vitest';
 import { getCurrentDate, getTimestampForInputDate } from 'chrono-utils';
 
 import { getParser } from '../../../src/application/getParser';
+
+import {
+  MissingRepoNameError,
+  NoCommentParsingMatchError,
+  NoParsingMatchFoundError,
+  NoPullRequestParsingMatchError,
+  NoReviewParsingMatchError
+} from '../../../src/application/errors/errors';
 
 import issueCommentCreated from '../../../testdata/webhooks/issue_comment-created.json';
 import prApproved from '../../../testdata/webhooks/pull_request_review-submitted-approved.json';
@@ -17,7 +25,7 @@ const parser = getParser({
 });
 const currentTime = getTimestampForInputDate(getCurrentDate(true));
 
-test.serial('It should parse a push event', (t) => {
+test('It should parse a push event', () => {
   const expected: any = [
     {
       timestamp: currentTime,
@@ -28,10 +36,10 @@ test.serial('It should parse a push event', (t) => {
 
   const response = parser.parse(push);
 
-  t.deepEqual(response, expected);
+  expect(response).toMatchObject(expected);
 });
 
-test.serial('It should parse a "ready for review" event', (t) => {
+test('It should parse a "ready for review" event', () => {
   const expected: any = [
     {
       timestamp: currentTime,
@@ -47,10 +55,10 @@ test.serial('It should parse a "ready for review" event', (t) => {
 
   const response = parser.parse(readyForReview);
 
-  t.deepEqual(response, expected);
+  expect(response).toMatchObject(expected);
 });
 
-test.serial('It should parse a "PR opened" event', (t) => {
+test('It should parse a "PR opened" event', () => {
   const expected: any = [
     {
       change: {
@@ -71,10 +79,10 @@ test.serial('It should parse a "PR opened" event', (t) => {
 
   const response = parser.parse(prOpened);
 
-  t.deepEqual(response, expected);
+  expect(response).toMatchObject(expected);
 });
 
-test.serial('It should parse a "PR closed" event', (t) => {
+test('It should parse a "PR closed" event', () => {
   const expected: any = [
     {
       timestamp: currentTime,
@@ -85,10 +93,10 @@ test.serial('It should parse a "PR closed" event', (t) => {
 
   const response = parser.parse(prClosed);
 
-  t.deepEqual(response, expected);
+  expect(response).toMatchObject(expected);
 });
 
-test.serial('It should parse a "PR merged" event', (t) => {
+test('It should parse a "PR merged" event', () => {
   const expected: any = [
     {
       timestamp: currentTime,
@@ -110,10 +118,10 @@ test.serial('It should parse a "PR merged" event', (t) => {
 
   const response = parser.parse(prMerged);
 
-  t.deepEqual(response, expected);
+  expect(response).toMatchObject(expected);
 });
 
-test.serial('It should parse a "issue comment merged" event', (t) => {
+test('It should parse a "issue comment merged" event', () => {
   const expected: any = [
     {
       timestamp: currentTime,
@@ -124,10 +132,10 @@ test.serial('It should parse a "issue comment merged" event', (t) => {
 
   const response = parser.parse(issueCommentCreated);
 
-  t.deepEqual(response, expected);
+  expect(response).toMatchObject(expected);
 });
 
-test.serial('It should parse a "approved" event', (t) => {
+test('It should parse a "approved" event', () => {
   const expected: any = [
     {
       timestamp: currentTime,
@@ -144,10 +152,10 @@ test.serial('It should parse a "approved" event', (t) => {
 
   const response = parser.parse(prApproved);
 
-  t.deepEqual(response, expected);
+  expect(response).toMatchObject(expected);
 });
 
-test.serial('It should parse a "changes requested" event', (t) => {
+test('It should parse a "changes requested" event', () => {
   const expected: any = [
     {
       timestamp: currentTime,
@@ -164,127 +172,95 @@ test.serial('It should parse a "changes requested" event', (t) => {
 
   const response = parser.parse(prChangesRequested);
 
-  t.deepEqual(response, expected);
+  expect(response).toMatchObject(expected);
 });
 
 /**
  * NEGATIVE TESTS
  */
 
-test.serial('It should throw a MissingRepoNameError if the repository name is missing', (t) => {
-  const expected = 'MissingRepoNameError';
+test('It should throw a MissingRepoNameError if the repository name is missing', () => {
+  // @ts-ignore
+  expect(() => parser.parse({})).toThrowError(MissingRepoNameError);
+});
+
+test('It should throw a NoParsingMatchFoundError if no parsing match can be found', () => {
+  const input = {
+    body: {
+      repository: {
+        full_name: 'something'
+      }
+    }
+  };
 
   // @ts-ignore
-  const error: any = t.throws(() => parser.parse({}));
-
-  t.is(error.name, expected);
+  expect(() => parser.parse(input)).toThrowError(NoParsingMatchFoundError);
 });
 
-test.serial('It should throw a NoParsingMatchFoundError if no parsing match can be found', (t) => {
-  const expected = 'NoParsingMatchFoundError';
-
-  const error: any = t.throws(() =>
-    // @ts-ignore
-    parser.parse({
-      body: {
-        repository: {
-          full_name: 'something'
-        }
+test('It should throw a NoCommentParsingMatchError if a parsing was not matched for a comment', () => {
+  const input = {
+    headers: {
+      'x-github-event': 'issue_comment'
+    },
+    body: {
+      repository: {
+        full_name: 'something'
       }
-    })
-  );
+    }
+  };
 
-  t.is(error.name, expected);
+  // @ts-ignore
+  expect(() => parser.parse(input)).toThrowError(NoCommentParsingMatchError);
 });
 
-test.serial(
-  'It should throw a NoCommentParsingMatchError if a parsing was not matched for a comment',
-  (t) => {
-    const expected = 'NoCommentParsingMatchError';
+test('It should throw a NoPullRequestParsingMatchError if a parsing was not matched for a pull request', () => {
+  const input = {
+    headers: {
+      'x-github-event': 'pull_request'
+    },
+    body: {
+      repository: {
+        full_name: 'something'
+      }
+    }
+  };
 
-    const error: any = t.throws(() =>
-      parser.parse({
-        headers: {
-          'x-github-event': 'issue_comment'
-        },
-        body: {
-          repository: {
-            full_name: 'something'
-          }
-        }
-      })
-    );
+  // @ts-ignore
+  expect(() => parser.parse(input)).toThrowError(NoPullRequestParsingMatchError);
+});
 
-    t.is(error.name, expected);
-  }
-);
+test('It should throw a NoReviewParsingMatchError if a parsing was not matched for a pull request review', () => {
+  const input = {
+    headers: {
+      'x-github-event': 'pull_request_review'
+    },
+    body: {
+      repository: {
+        full_name: 'something'
+      }
+    }
+  };
 
-test.serial(
-  'It should throw a NoPullRequestParsingMatchError if a parsing was not matched for a pull request',
-  (t) => {
-    const expected = 'NoPullRequestParsingMatchError';
+  // @ts-ignore
+  expect(() => parser.parse(input)).toThrowError(NoReviewParsingMatchError);
+});
 
-    const error: any = t.throws(() =>
-      parser.parse({
-        headers: {
-          'x-github-event': 'pull_request'
-        },
-        body: {
-          repository: {
-            full_name: 'something'
-          }
-        }
-      })
-    );
+test('It should throw a NoReviewParsingMatchError if an unknown PR submitted state is seen', () => {
+  const input = {
+    headers: {
+      'x-github-event': 'pull_request_review'
+    },
+    body: {
+      action: 'submitted',
+      review: {
+        state: 'something-that-does-not-exist'
+      },
+      repository: {
+        full_name: 'something'
+      }
+    }
+  };
 
-    t.is(error.name, expected);
-  }
-);
-
-test.serial(
-  'It should throw a NoReviewParsingMatchError if a parsing was not matched for a pull request review',
-  (t) => {
-    const expected = 'NoReviewParsingMatchError';
-
-    const error: any = t.throws(() =>
-      parser.parse({
-        headers: {
-          'x-github-event': 'pull_request_review'
-        },
-        body: {
-          repository: {
-            full_name: 'something'
-          }
-        }
-      })
-    );
-
-    t.is(error.name, expected);
-  }
-);
-
-test.serial(
-  'It should throw a NoReviewParsingMatchError if an unknown PR submitted state is seen',
-  (t) => {
-    const expected = 'NoReviewParsingMatchError';
-
-    const error: any = t.throws(() =>
-      parser.parse({
-        headers: {
-          'x-github-event': 'pull_request_review'
-        },
-        body: {
-          action: 'submitted',
-          review: {
-            state: 'something-that-does-not-exist'
-          },
-          repository: {
-            full_name: 'something'
-          }
-        }
-      })
-    );
-
-    t.is(error.name, expected);
-  }
-);
+  // @ts-ignore
+  expect(() => parser.parse(input)).toThrowError(NoReviewParsingMatchError);
+});

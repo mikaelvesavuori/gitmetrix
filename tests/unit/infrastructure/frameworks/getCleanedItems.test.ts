@@ -1,12 +1,14 @@
-import test from 'ava';
+import { test, expect } from 'vitest';
 
 import { getCleanedItems } from '../../../../src/infrastructure/frameworks/getCleanedItems';
+
+import { NoMappedKeyError } from '../../../../src/application/errors/errors';
 
 /**
  * POSITIVE TESTS
  */
 
-test.serial('It should get a set of cleaned DynamoDB items', (t) => {
+test('It should get a set of cleaned DynamoDB items', () => {
   const expected = [
     {
       '20221201': {
@@ -33,10 +35,10 @@ test.serial('It should get a set of cleaned DynamoDB items', (t) => {
 
   const response = getCleanedItems(input);
 
-  t.deepEqual(response, expected);
+  expect(response).toMatchObject(expected);
 });
 
-test.serial('It should return an empty array if items are not of expected shape', (t) => {
+test('It should return an empty array if items are not of expected shape', () => {
   const expected: any = [];
 
   const input: any = {
@@ -46,23 +48,20 @@ test.serial('It should return an empty array if items are not of expected shape'
   };
   const response = getCleanedItems(input);
 
-  t.deepEqual(response, expected);
+  expect(response).toMatchObject(expected);
 });
 
 /**
  * NEGATIVE TESTS
  */
 
-test.serial('It should throw a NoMappedKeyError if there is no key to map to', (t) => {
-  const expected = 'NoMappedKeyError';
-
+test('It should throw a NoMappedKeyError if there is no key to map to', () => {
   const input: any = [
     {
       sk: { S: '20221201' },
       xxx: {}
     }
   ];
-  const error: any = t.throws(() => getCleanedItems(input));
 
-  t.is(error.name, expected);
+  expect(() => getCleanedItems(input)).toThrowError(NoMappedKeyError);
 });

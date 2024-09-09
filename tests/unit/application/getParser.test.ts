@@ -1,15 +1,12 @@
-import test from 'ava';
+import { test, expect } from 'vitest';
 
 import { getParser } from '../../../src/application/getParser';
+import { NoMatchingParserError } from '../../../src/application/errors/errors';
 
 /**
  * NEGATIVE TESTS
  */
 
-test.serial('It should throw a NoMatchingParserError if a matching parser is not found', (t) => {
-  const expected = 'NoMatchingParserError';
-
-  const error: any = t.throws(() => getParser({}));
-
-  t.is(error.name, expected);
+test('It should throw a NoMatchingParserError if a matching parser is not found', () => {
+  expect(() => getParser({})).toThrowError(NoMatchingParserError);
 });

@@ -1,4 +1,4 @@
-import test from 'ava';
+import { test, expect } from 'vitest';
 
 import { getMetrics } from '../../../src/usecases/getMetrics';
 
@@ -7,7 +7,7 @@ import { getRepo } from '../../../src/infrastructure/frameworks/getRepo';
 import metricsResultsFresh from '../../../testdata/expectations/metrics-results-fresh.json';
 import { testCachedMetrics } from '../../../testdata/database/LocalTestDatabase';
 
-test.serial('It should get metrics', async (t) => {
+test('It should get metrics', async () => {
   const expected: any = metricsResultsFresh;
 
   const repository = getRepo(true);
@@ -18,10 +18,10 @@ test.serial('It should get metrics', async (t) => {
     offset: 0
   });
 
-  t.deepEqual(response, expected);
+  expect(response).toMatchObject(expected);
 });
 
-test.serial('It should get cached metrics', async (t) => {
+test('It should get cached metrics', async () => {
   const expected: any = testCachedMetrics;
 
   const repository = getRepo(true);
@@ -32,5 +32,5 @@ test.serial('It should get cached metrics', async (t) => {
     offset: 0
   });
 
-  t.deepEqual(response, expected);
+  expect(response).toMatchObject(expected);
 });

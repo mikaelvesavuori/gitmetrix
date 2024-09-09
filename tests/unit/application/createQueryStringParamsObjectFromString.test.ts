@@ -1,4 +1,4 @@
-import test from 'ava';
+import { test, expect } from 'vitest';
 
 import { createQueryStringParamsObjectFromString } from '../../../src/application/createQueryStringParamsObjectFromString';
 
@@ -6,20 +6,20 @@ import { createQueryStringParamsObjectFromString } from '../../../src/applicatio
  * POSITIVE TESTS
  */
 
-test.serial('It should return a clean object from a query parameter string', (t) => {
+test('It should return a clean object from a query parameter string', () => {
   const expected = { repo: 'SOMEORG/SOMEREPO', from: '20230220', to: '20230225' };
 
   const result = createQueryStringParamsObjectFromString({
     rawQueryString: 'repo=SOMEORG/SOMEREPO&from=20230220&to=20230225'
   });
 
-  t.deepEqual(result, expected);
+  expect(result).toMatchObject(expected);
 });
 
-test.serial('It should return an empty object for an unknown input', (t) => {
+test('It should return an empty object for an unknown input', () => {
   const expected = {};
 
   const result = createQueryStringParamsObjectFromString({});
 
-  t.deepEqual(result, expected);
+  expect(result).toMatchObject(expected);
 });

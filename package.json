@@ -1,7 +1,7 @@
 {
   "name": "gitmetrix",
   "description": "Helps you find your team-level engineering metrics",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "author": "Mikael Vesavuori",
   "license": "MIT",
   "keywords": [
@@ -26,7 +26,8 @@
     "test": "npm run test:licenses && npm run test:types && npm run test:unit",
     "test:types": "npx type-coverage --at-least 97.5 --strict --ignore-files \"tests/**/*.ts\" --ignore-files \"*.ts\" --ignore-files \"src/application/errors/*.ts\" --ignore-files \"testdata/*.ts\"",
     "test:licenses": "npx license-compliance --direct --allow 'MIT;ISC;0BSD;BSD-2-Clause;BSD-3-Clause;Apache-2.0;Unlicense;CC0-1.0'",
-    "test:unit": "npx c8 -reporter=lcov ava",
+    "test:unit": "npx vitest run --coverage",
+    "test:unit:watch": "npx vitest --watch",
     "test:createdata": "npx ts-node tests/createTestData.ts",
     "docs": "rm -rf docs && mkdir docs && npm run docs:typedoc && npm run docs:madge && npm run docs:cfndia",
     "docs:madge": "npx madge --image diagrams/code-diagram.svg --exclude '(testdata|interfaces|application/errors|infrastructure/utils|config)/.{0,}.(ts|js|json)' --extensions ts src",
@@ -45,43 +46,28 @@
     "mikrometric": "1"
   },
   "devDependencies": {
-    "@ava/typescript": "3",
     "@mhlabs/cfn-diagram": "1",
     "@types/aws-lambda": "8",
-    "@types/node": "18",
-    "@typescript-eslint/eslint-plugin": "5",
-    "@typescript-eslint/parser": "5",
-    "ava": "5",
-    "c8": "7",
+    "@types/node": "22",
+    "@typescript-eslint/eslint-plugin": "8",
+    "@typescript-eslint/parser": "8",
+    "@vitest/coverage-v8": "2",
     "eslint": "8",
-    "eslint-config-prettier": "8",
-    "eslint-plugin-prettier": "4",
-    "husky": "8",
+    "eslint-config-prettier": "9",
+    "eslint-plugin-prettier": "5",
+    "husky": "9",
     "license-compliance": "latest",
-    "madge": "5",
-    "prettier": "2",
+    "madge": "8",
+    "prettier": "3",
     "serverless": "3",
     "serverless-esbuild": "1",
     "serverless-iam-roles-per-function": "3",
-    "serverless-offline": "12",
+    "serverless-offline": "13",
     "ts-node": "latest",
     "tslib": "2",
     "type-coverage": "2",
-    "typedoc": "0.23.26",
-    "typescript": "4"
-  },
-  "ava": {
-    "typescript": {
-      "rewritePaths": {
-        "src/": "lib/"
-      },
-      "compile": false
-    },
-    "files": [
-      "tests/unit/**/*.ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ]
+    "typedoc": "latest",
+    "typescript": "5",
+    "vitest": "2"
   }
 }
